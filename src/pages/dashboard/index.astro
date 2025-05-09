@@ -3,12 +3,28 @@ import Layout from "@/layouts/Layout.astro";
 ---
 
 <Layout>
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <h3>Panel de control</h3>
-        <p>Bienvenido a tu panel de control.</p>
+  <section
+    class="w-full h-screen bg-[var(--background)] flex flex-col items-center justify-center"
+  >
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h3>Panel de control</h3>
+          <p>Bienvenido a tu panel de control.</p>
+          <a href="/login"
+            ><button
+              class="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
+              >Salir</button
+            ></a
+          >
+          <a href="/writeboard"
+            ><button
+              class="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
+              >Crear una nueva tabla</button
+            ></a
+          >
+        </div>
       </div>
     </div>
-  </div>
+  </section>
 </Layout>
