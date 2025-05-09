@@ -1,5 +1,10 @@
 ---
-
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/astro/components";
 ---
 
 <section
@@ -14,11 +19,22 @@
     App para facilitar la toma de decisiones a traves de un comparativa de pros
     y contras
   </p>
-  <a href="/register">
-    <button
+  <SignedOut>
+    <SignInButton
+      mode="modal"
       class="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
     >
       Comienza Ahora
-    </button>
-  </a>
+    </SignInButton>
+  </SignedOut>
+  <SignedIn>
+    <UserButton showName={true} />
+    <a href="/dashboard">
+      <button
+        class="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
+      >
+        Entrar a Dashboard
+      </button>
+    </a>
+  </SignedIn>
 </section>
