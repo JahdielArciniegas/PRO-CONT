@@ -1,5 +1,16 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import { pb } from "@/lib/pocketbase";
+
+const boards = await pb.collection("boards").getFullList();
+
+const ExtraerPros = (board) => {
+  return board.pros.split(",");
+};
+
+const ExtraerCons = (board) => {
+  return board.cons.split(",");
+};
 ---
 
 <Layout>
@@ -23,6 +34,31 @@ import Layout from "@/layouts/Layout.astro";
               >Crear una nueva tabla</button
             ></a
           >
+          <ul>
+            {
+              boards.map((board) => (
+                <li>
+                  <div>
+                    <h3>{board.title}</h3>
+                    <div class="flex gap-4 bg-[var(--muted)] p-4 rounded-lg shadow-2xl">
+                      <ul class="flex flex-col justify-center items-center gap-2 w-1/2">
+                        <h4 class="text-2xl font-bold">Contras</h4>
+                        {ExtraerCons(board).map((cons: string) => (
+                          <li>{cons}</li>
+                        ))}
+                      </ul>
+                      <ul class="flex flex-col justify-center items-center gap-2 w-1/2">
+                        <h4 class="text-2xl font-bold">Pros</h4>
+                        {ExtraerPros(board).map((pros: string) => (
+                          <li>{pros}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </li>
+              ))
+            }
+          </ul>
         </div>
       </div>
     </div>
