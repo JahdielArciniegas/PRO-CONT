@@ -1,14 +1,15 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { pb } from "@/lib/pocketbase";
+import type { Board } from "@/lib/types";
 
-const boards = await pb.collection("boards").getFullList();
+const boards = await pb.collection("boards").getFullList<Board>();
 
-const ExtraerPros = (board) => {
+const ExtraerPros = (board: Board) => {
   return board.pros.split(",");
 };
 
-const ExtraerCons = (board) => {
+const ExtraerCons = (board: Board) => {
   return board.cons.split(",");
 };
 ---
