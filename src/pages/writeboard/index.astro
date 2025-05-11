@@ -1,17 +1,21 @@
 ---
+import WriteBoard from "@/components/writeboard/WriteBoard";
 import Layout from "@/layouts/Layout.astro";
 ---
 
 <Layout>
-  <section
-    class="w-full h-screen bg-[var(--background)] flex flex-col items-center justify-center"
-  >
-    <h1>WriteBoard</h1>
-    <a href="/dashboard"
-      ><button
-        class="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
-        >Regresar</button
-      ></a
-    >
+  <section class="w-full h-screen bg-[var(--background)] flex">
+    <div class="w-1/4 p-4 flex flex-col items-center justify-center shadow-2xl">
+      <h1>WriteBoard</h1>
+      <a href="/dashboard"
+        ><button
+          class="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
+          >Regresar</button
+        ></a
+      >
+    </div>
+    <div class="w-3/4 p-4">
+      <WriteBoard client:load />
+    </div>
   </section>
 </Layout>
