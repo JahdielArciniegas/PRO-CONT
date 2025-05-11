@@ -1,7 +1,9 @@
 ---
+import Boards from "@/components/Boards";
 import Layout from "@/layouts/Layout.astro";
 import { pb } from "@/lib/pocketbase";
 import type { Board } from "@/lib/types";
+import UserButton from "node_modules/@clerk/astro/components/interactive/UserButton/UserButton.astro";
 
 const boards = await pb.collection("boards").getFullList<Board>();
 
@@ -16,51 +18,32 @@ const ExtraerCons = (board: Board) => {
 
 <Layout>
   <section
-    class="w-full h-screen bg-[var(--background)] flex flex-col items-center justify-center"
+    class="w-full h-screen bg-[var(--background)] flex items-center justify-center"
   >
-    <div class="container">
-      <div class="row">
-        <div class="col">
+    <div class="w-full h-full">
+      <div class="flex gap-4">
+        <div
+          class="w-1/4 shadow-2xl h-screen p-4 flex flex-col justify-center items-center"
+        >
           <h3>Panel de control</h3>
+          <UserButton showName />
           <p>Bienvenido a tu panel de control.</p>
-          <a href="/"
-            ><button
-              class="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
-              >Salir</button
-            ></a
-          >
-          <a href="/writeboard"
-            ><button
-              class="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
-              >Crear una nueva tabla</button
-            ></a
-          >
-          <ul>
-            {
-              boards.map((board) => (
-                <li>
-                  <div>
-                    <h3>{board.title}</h3>
-                    <div class="flex gap-4 bg-[var(--muted)] p-4 rounded-lg shadow-2xl">
-                      <ul class="flex flex-col justify-center items-center gap-2 w-1/2">
-                        <h4 class="text-2xl font-bold">Contras</h4>
-                        {ExtraerCons(board).map((cons: string) => (
-                          <li>{cons}</li>
-                        ))}
-                      </ul>
-                      <ul class="flex flex-col justify-center items-center gap-2 w-1/2">
-                        <h4 class="text-2xl font-bold">Pros</h4>
-                        {ExtraerPros(board).map((pros: string) => (
-                          <li>{pros}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </li>
-              ))
-            }
-          </ul>
+          <div>
+            <a href="/"
+              ><button
+                class="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
+                >Salir</button
+              ></a
+            >
+            <a href="/writeboard"
+              ><button
+                class="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
+                >Crear una nueva tabla</button
+              ></a
+            >
+          </div>
         </div>
+        <Boards client:load />
       </div>
     </div>
   </section>

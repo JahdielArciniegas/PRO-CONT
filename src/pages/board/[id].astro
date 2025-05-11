@@ -1,0 +1,11 @@
+---
+import Layout from "@/layouts/Layout.astro";
+const { id } = Astro.params;
+import { pb } from "@/lib/pocketbase";
+
+const board = await pb.collection("boards").getOne(id as string);
+---
+
+<Layout>
+  <h1>{board.title}</h1>
+</Layout>
