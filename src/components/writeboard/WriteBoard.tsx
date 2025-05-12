@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { DndContext } from "@dnd-kit/core";
-import { Draggable } from "./Draggable";
 import { Droppable } from "./Droppable";
+import DraggableItem from "./DraggableItem";
 
 interface content {
   id: string;
@@ -10,7 +10,6 @@ interface content {
 }
 
 const WriteBoard = () => {
-  const [parent, setParent] = useState(null);
   const [inputs, setInputs] = useState<content[]>([]);
 
   const [newActualInput, setNewActualInput] = useState("");
@@ -66,15 +65,11 @@ const WriteBoard = () => {
                 inputs
                   .filter((input) => input.status === "pros")
                   .map((input) => (
-                    <div key={input.id} className="flex gap-2">
-                      <Draggable id={input.id}>{input.value}</Draggable>
-                      <button
-                        onClick={() => handleDelete(input.id)}
-                        className="p-2 rounded-lg bg-[var(--destructive)] text-white cursor-pointer"
-                      >
-                        Eliminar
-                      </button>
-                    </div>
+                    <DraggableItem
+                      key={input.id}
+                      input={input}
+                      handleDelete={handleDelete}
+                    />
                   ))
               ) : (
                 <p>No hay Pros</p>
@@ -90,15 +85,11 @@ const WriteBoard = () => {
                 inputs
                   .filter((input) => input.status === "cons")
                   .map((input) => (
-                    <div key={input.id} className="flex gap-2">
-                      <Draggable id={input.id}>{input.value}</Draggable>
-                      <button
-                        onClick={() => handleDelete(input.id)}
-                        className="p-2 rounded-lg bg-[var(--destructive)] text-white cursor-pointer"
-                      >
-                        Eliminar
-                      </button>
-                    </div>
+                    <DraggableItem
+                      key={input.id}
+                      input={input}
+                      handleDelete={handleDelete}
+                    />
                   ))
               ) : (
                 <p>No hay Contras</p>
@@ -113,15 +104,11 @@ const WriteBoard = () => {
             inputs
               .filter((input) => input.status === "new")
               .map((input) => (
-                <div key={input.id} className="flex gap-2">
-                  <Draggable id={input.id}>{input.value}</Draggable>
-                  <button
-                    onClick={() => handleDelete(input.id)}
-                    className="p-2 rounded-lg bg-[var(--destructive)] text-white cursor-pointer"
-                  >
-                    Eliminar
-                  </button>
-                </div>
+                <DraggableItem
+                  key={input.id}
+                  input={input}
+                  handleDelete={handleDelete}
+                />
               ))
           ) : (
             <p>No hay inputs</p>
@@ -167,7 +154,6 @@ const WriteBoard = () => {
         return input;
       })
     );
-    setParent(over ? over.id : null);
   }
 };
 
