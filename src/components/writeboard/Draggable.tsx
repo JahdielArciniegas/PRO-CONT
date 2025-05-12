@@ -12,7 +12,7 @@ export function Draggable(props: any) {
   };
 
   return (
-    <button
+    <div
       ref={setNodeRef}
       style={style}
       {...listeners}
@@ -20,6 +20,6 @@ export function Draggable(props: any) {
       className="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
     >
       {props.children}
-    </button>
+    </div>
   );
 }
