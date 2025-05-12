@@ -1,19 +1,12 @@
 ---
 import Boards from "@/components/Boards";
 import Layout from "@/layouts/Layout.astro";
-import { pb } from "@/lib/pocketbase";
-import type { Board } from "@/lib/types";
-import UserButton from "node_modules/@clerk/astro/components/interactive/UserButton/UserButton.astro";
+import { UserButton } from "@clerk/astro/components";
 
-const boards = await pb.collection("boards").getFullList<Board>();
-
-const ExtraerPros = (board: Board) => {
-  return board.pros.split(",");
-};
-
-const ExtraerCons = (board: Board) => {
-  return board.cons.split(",");
-};
+const { userId, redirectToSignIn } = Astro.locals.auth();
+if (!userId) {
+  return redirectToSignIn();
+}
 ---
 
 <Layout>
@@ -43,7 +36,7 @@ const ExtraerCons = (board: Board) => {
             >
           </div>
         </div>
-        <Boards client:load />
+        <Boards userId={userId} client:load />
       </div>
     </div>
   </section>
