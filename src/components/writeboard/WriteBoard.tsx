@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DndContext } from "@dnd-kit/core";
 import { Droppable } from "./Droppable";
 import DraggableItem from "./DraggableItem";
@@ -15,29 +15,37 @@ const WriteBoard = () => {
   const [newActualInput, setNewActualInput] = useState("");
   const [idInput, setIdInput] = useState("");
 
+  useEffect(() => {
+    const storedInputs = localStorage.getItem("inputs");
+    if (storedInputs) {
+      setInputs(JSON.parse(storedInputs));
+    }
+  }, []);
+
   const handleInputChange = () => {
     if (idInput === "") {
-      setInputs([
+      const newInput = [
         ...inputs,
         {
           id: String(inputs.length + 1),
           value: newActualInput,
           status: "new",
         },
-      ]);
-      console.log(inputs);
+      ];
+      setInputs(newInput);
+      localStorage.setItem("inputs", JSON.stringify(newInput));
     } else {
-      setInputs(
-        inputs.map((input) => {
-          if (input.id === idInput) {
-            return {
-              ...input,
-              value: newActualInput,
-            };
-          }
-          return input;
-        })
-      );
+      const newValue = inputs.map((input) => {
+        if (input.id === idInput) {
+          return {
+            ...input,
+            value: newActualInput,
+          };
+        }
+        return input;
+      });
+      setInputs(newValue);
+      localStorage.setItem("inputs", JSON.stringify(newValue));
     }
     setNewActualInput("");
     setIdInput("");
@@ -45,6 +53,7 @@ const WriteBoard = () => {
 
   const handleDelete = (id: string) => {
     setInputs(inputs.filter((input) => input.id !== id));
+    localStorage.setItem("inputs", JSON.stringify(inputs));
   };
 
   return (
@@ -144,16 +153,16 @@ const WriteBoard = () => {
   );
 
   function handleDragEnd({ active, over }: any) {
-    setInputs(
-      inputs.map((input) => {
-        if (input.id === active.id) {
-          setIdInput(input.id);
-          setNewActualInput(input.value);
-          return { ...input, status: over.id };
-        }
-        return input;
-      })
-    );
+    const newField = inputs.map((input) => {
+      if (input.id === active.id) {
+        setIdInput(input.id);
+        setNewActualInput(input.value);
+        return { ...input, status: over.id };
+      }
+      return input;
+    });
+    setInputs(newField);
+    localStorage.setItem("inputs", JSON.stringify(newField));
   }
 };
 
