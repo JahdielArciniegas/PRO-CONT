@@ -1,6 +1,12 @@
 ---
 import WriteBoard from "@/components/writeboard/WriteBoard";
 import Layout from "@/layouts/Layout.astro";
+import { UserButton } from "@clerk/astro/components";
+
+const { userId, redirectToSignIn } = Astro.locals.auth();
+if (!userId) {
+  return redirectToSignIn();
+}
 ---
 
 <Layout>
@@ -15,7 +21,7 @@ import Layout from "@/layouts/Layout.astro";
       >
     </div>
     <div class="w-3/4 p-4">
-      <WriteBoard client:only="react" />
+      <WriteBoard userId={userId} client:only="react" />
     </div>
   </section>
 </Layout>

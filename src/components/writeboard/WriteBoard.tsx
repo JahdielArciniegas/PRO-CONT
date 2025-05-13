@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { DndContext } from "@dnd-kit/core";
 import { Droppable } from "./Droppable";
 import DraggableItem from "./DraggableItem";
+import { pb } from "@/lib/pocketbase";
 
 interface content {
   id: string;
@@ -9,20 +10,43 @@ interface content {
   status: string;
 }
 
-const WriteBoard = () => {
+const WriteBoard = ({ userId }: { userId: string }) => {
   const [inputs, setInputs] = useState<content[]>([]);
-
+  const [title, setTitle] = useState("");
   const [newActualInput, setNewActualInput] = useState("");
   const [idInput, setIdInput] = useState("");
 
   useEffect(() => {
     const storedInputs = localStorage.getItem("inputs");
+    const storedTitle = localStorage.getItem("title");
     if (storedInputs) {
       setInputs(JSON.parse(storedInputs));
     }
+    if (storedTitle) {
+      setTitle(JSON.parse(storedTitle));
+    }
   }, []);
 
+  const saveBoard = async () => {
+    const board = {
+      id_user: userId,
+      title,
+      pros: inputs
+        .filter((input) => input.status === "pros")
+        .map((input) => input.value)
+        .join(","),
+      cons: inputs
+        .filter((input) => input.status === "cons")
+        .map((input) => input.value)
+        .join(","),
+    };
+
+    const response = await pb.collection("boards").create(board);
+    console.log(response);
+  };
+
   const handleInputChange = () => {
+    localStorage.setItem("title", title);
     if (idInput === "") {
       const newInput = [
         ...inputs,
@@ -58,12 +82,20 @@ const WriteBoard = () => {
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
-      <div className="flex justify-center">
+      <div className="flex justify-center gap-2">
         <input
           type="text"
           className="p-2 rounded-lg bg-[var(--muted)] "
           placeholder="Escribe un Titulo para tu tabla"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
+        <button
+          onClick={saveBoard}
+          className="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
+        >
+          Guardar
+        </button>
       </div>
       <div className="flex h-[600px]">
         <div className="w-1/2 flex flex-col items-center flex-1">
