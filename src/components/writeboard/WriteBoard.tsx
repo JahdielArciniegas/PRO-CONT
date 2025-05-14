@@ -41,6 +41,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
     setInputs(storedInputs);
     localStorage.setItem("inputs", JSON.stringify(storedInputs));
     localStorage.setItem("title", board.title);
+    localStorage.setItem("idEdit", idBoard);
     setStatusEdit(true);
   };
 
@@ -48,6 +49,11 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
     if (idBoard !== "") {
       board();
     } else {
+      if (localStorage.getItem("idEdit") !== idBoard) {
+        localStorage.removeItem("inputs");
+        localStorage.removeItem("title");
+        localStorage.removeItem("idEdit");
+      }
       const storedInputs = localStorage.getItem("inputs");
       const storedTitle = localStorage.getItem("title");
       if (storedInputs) {
@@ -75,8 +81,16 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
 
     if (statusEdit) {
       await pb.collection("boards").update(idBoard, board);
+      localStorage.removeItem("inputs");
+      localStorage.removeItem("title");
+      localStorage.removeItem("idEdit");
+      window.location.href = "/dashboard";
     } else {
       await pb.collection("boards").create(board);
+      localStorage.removeItem("inputs");
+      localStorage.removeItem("title");
+      localStorage.removeItem("idEdit");
+      window.location.href = "/dashboard";
     }
   };
 
