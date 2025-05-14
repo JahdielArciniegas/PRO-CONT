@@ -7,5 +7,42 @@ const board = await pb.collection("boards").getOne(id as string);
 ---
 
 <Layout>
-  <h1>{board.title}</h1>
+  <section class="w-full h-screen bg-[var(--background)] flex">
+    <aside
+      class="w-1/4 p-4 flex flex-col items-center justify-center shadow-2xl"
+    >
+      <h1>WriteBoard</h1>
+      <a href="/dashboard"
+        ><button
+          class="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
+          >Regresar</button
+        ></a
+      >
+    </aside>
+    <div class="w-3/4 p-4 flex flex-col">
+      <h2 class="text-2xl font-bold text-center">{board.title}</h2>
+      <div class="flex gap-4 w-full flex-1">
+        <div class="w-1/2 flex flex-col items-center">
+          <h2 class="text-xl font-bold text-center">Pros</h2>
+          <ul class="flex flex-col gap-6">
+            {board.pros.split(",").map((pro: string) => <li>{pro}</li>)}
+          </ul>
+        </div>
+        <div class="w-1/2 flex flex-col items-center">
+          <h2 class="text-xl font-bold text-center">Contras</h2>
+          <ul class="flex flex-col gap-6">
+            {board.cons.split(",").map((con: string) => <li>{con}</li>)}
+          </ul>
+        </div>
+      </div>
+      <div class="flex justify-center">
+        <a href={`/writeboard/${id}`}>
+          <button
+            class="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
+            >Editar</button
+          >
+        </a>
+      </div>
+    </div>
+  </section>
 </Layout>

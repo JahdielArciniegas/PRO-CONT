@@ -4,28 +4,60 @@ import { Droppable } from "./Droppable";
 import DraggableItem from "./DraggableItem";
 import { pb } from "@/lib/pocketbase";
 
+interface WriteBoardProps {
+  userId: string;
+  idBoard?: string;
+}
+
 interface content {
   id: string;
   value: string;
   status: string;
 }
 
-const WriteBoard = ({ userId }: { userId: string }) => {
+const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   const [inputs, setInputs] = useState<content[]>([]);
   const [title, setTitle] = useState("");
+  const [statusEdit, setStatusEdit] = useState(false);
   const [newActualInput, setNewActualInput] = useState("");
   const [idInput, setIdInput] = useState("");
 
+  const board = async () => {
+    await localStorage.removeItem("inputs");
+    await localStorage.removeItem("title");
+    const board = await pb.collection("boards").getOne(idBoard);
+    setTitle(board.title);
+    const storedInputsPros = board.pros.split(",").map((input: string) => ({
+      id: crypto.randomUUID(),
+      value: input,
+      status: "pros",
+    }));
+    const storedInputsCons = board.cons.split(",").map((input: string) => ({
+      id: crypto.randomUUID(),
+      value: input,
+      status: "cons",
+    }));
+    const storedInputs = [...storedInputsPros, ...storedInputsCons];
+    setInputs(storedInputs);
+    localStorage.setItem("inputs", JSON.stringify(storedInputs));
+    localStorage.setItem("title", board.title);
+    setStatusEdit(true);
+  };
+
   useEffect(() => {
-    const storedInputs = localStorage.getItem("inputs");
-    const storedTitle = localStorage.getItem("title");
-    if (storedInputs) {
-      setInputs(JSON.parse(storedInputs));
+    if (idBoard !== "") {
+      board();
+    } else {
+      const storedInputs = localStorage.getItem("inputs");
+      const storedTitle = localStorage.getItem("title");
+      if (storedInputs) {
+        setInputs(JSON.parse(storedInputs));
+      }
+      if (storedTitle) {
+        setTitle(JSON.parse(storedTitle));
+      }
     }
-    if (storedTitle) {
-      setTitle(JSON.parse(storedTitle));
-    }
-  }, []);
+  }, [idBoard]);
 
   const saveBoard = async () => {
     const board = {
@@ -41,8 +73,11 @@ const WriteBoard = ({ userId }: { userId: string }) => {
         .join(","),
     };
 
-    const response = await pb.collection("boards").create(board);
-    console.log(response);
+    if (statusEdit) {
+      await pb.collection("boards").update(idBoard, board);
+    } else {
+      await pb.collection("boards").create(board);
+    }
   };
 
   const handleInputChange = () => {
@@ -51,7 +86,7 @@ const WriteBoard = ({ userId }: { userId: string }) => {
       const newInput = [
         ...inputs,
         {
-          id: String(inputs.length + 1),
+          id: crypto.randomUUID(),
           value: newActualInput,
           status: "new",
         },
