@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { DndContext } from "@dnd-kit/core";
 import { Droppable } from "./Droppable";
 import DraggableItem from "./DraggableItem";
@@ -20,6 +20,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   const [title, setTitle] = useState("");
   const [statusEdit, setStatusEdit] = useState(false);
   const [newActualInput, setNewActualInput] = useState("");
+  const [suggestions, setSuggestions] = useState("No hay sugerencias");
   const [idInput, setIdInput] = useState("");
 
   const board = async () => {
@@ -45,6 +46,21 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
     setStatusEdit(true);
   };
 
+  const handleSuggest = async () => {
+    const response = await fetch("/api/suggest", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        input: newActualInput,
+        title,
+      }),
+    });
+    const data = await response.json();
+    setSuggestions(data.choices[0].message.content);
+  };
+
   useEffect(() => {
     if (idBoard !== "") {
       board();
@@ -63,7 +79,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
         setTitle(JSON.parse(storedTitle));
       }
     }
-  }, [idBoard]);
+  }, []);
 
   const saveBoard = async () => {
     const board = {
@@ -228,6 +244,13 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
           className="p-2 rounded-lg bg-[var(--destructive)] text-white cursor-pointer"
         >
           cancelar
+        </button>
+        <p>{suggestions}</p>
+        <button
+          onClick={handleSuggest}
+          className="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
+        >
+          Sugerir
         </button>
       </div>
     </DndContext>

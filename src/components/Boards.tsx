@@ -40,7 +40,7 @@ const Boards = ({ userId }: { userId: string }) => {
       <div className="relative flex flex-col gap-4 w-full">
         <ul className="p-4 grid grid-cols-2 grid-row-2 gap-4">
           {boards.map((board) => (
-            <li>
+            <li key={board.id}>
               <div className="flex flex-col justify-center gap-8 items-center bg-[var(--muted)] p-4 rounded-lg shadow-2xl text-pre-wrap h-82">
                 <h3 className="text-4xl flex gap-2 items-center justify-center text-center">
                   <a
@@ -60,14 +60,14 @@ const Boards = ({ userId }: { userId: string }) => {
                   <ul className="flex flex-col gap-2 w-1/2 h-52 p-4 overflow-y-auto">
                     <h4 className="text-2xl font-bold text-center">Pros</h4>
                     {ExtraerPros(board).map((pros: string) => (
-                      <li>{pros}</li>
+                      <li key={Math.random()}>{pros}</li>
                     ))}
                   </ul>
                   <span className="w-[2px] h-52 bg-[var(--foreground)]"></span>
                   <ul className="flex flex-col gap-2 w-1/2 h-52 p-4 overflow-y-auto">
                     <h4 className="text-2xl font-bold text-center">Contras</h4>
                     {ExtraerCons(board).map((cons: string) => (
-                      <li>{cons}</li>
+                      <li key={Math.random()}>{cons}</li>
                     ))}
                   </ul>
                 </div>

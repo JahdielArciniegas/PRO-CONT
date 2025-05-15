@@ -36,7 +36,7 @@ if (!userId) {
             >
           </div>
         </div>
-        <Boards userId={userId} client:load />
+        <Boards userId={userId} client:only="react" />
       </div>
     </div>
   </section>
