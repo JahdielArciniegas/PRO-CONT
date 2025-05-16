@@ -1,52 +1,85 @@
 import ClerkLayout from "@src/layouts/ClerkLayaout";
-import { Suspense } from "react";
+import { ModeToggle } from "./ModeToggle";
+import { User, Plus, FileStack, Columns2, LogOut } from "lucide-react";
 import { SignOutButton, UserButton } from "@clerk/clerk-react";
+import { Button } from "../ui/button";
+import { useState } from "react";
 
 const AsideBar = () => {
+  const [open, setOpen] = useState(false);
+
   return (
     <ClerkLayout>
-      <aside className="w-64 shadow-2xl h-screen p-4 flex flex-col items-center">
-        <h3>Panel de control</h3>
-        <Suspense fallback={<div>Loading...</div>}>
-          <UserButton />
-        </Suspense>
-        <ul className="flex flex-col gap-4">
-          <li>
-            <a href="/dashboard">
-              <button className="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer">
-                Mis Pros vs Contras
-              </button>
-            </a>
-          </li>
-          <li>
-            <a href="/writeboard">
-              <button className="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer">
-                Crear Pros vs Contras
-              </button>
-            </a>
-          </li>
-          <li>
-            <a href="/profile">
-              <button className="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer">
-                Perfil
-              </button>
-            </a>
-          </li>
-          <li>
-            <SignOutButton>
-              <button className="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer">
-                Cerrar sesión
-              </button>
-            </SignOutButton>
-          </li>
-          <li>
-            <a href="/">
-              <button className="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer">
-                Salir
-              </button>
-            </a>
-          </li>
-        </ul>
+      <aside
+        className={`shadow-2xl h-screen flex flex-col items-center justify-between transition-transform duration-300  ${
+          open ? "w-16" : "w-64"
+        }`}
+      >
+        <div className="flex flex-col gap-8 p-4">
+          <div className="absolute left-4 top-4 text-2xl font-bold flex gap-2 items-center">
+            {!open && <ModeToggle />}
+            <Button
+              className="cursor-pointer"
+              variant="ghost"
+              onClick={() => setOpen(!open)}
+            >
+              <Columns2 />
+            </Button>
+            <h1 className={`${open && "pl-4"}`}>
+              <span className="text-green-500">PRO</span>/
+              <span className="text-red-500">CONT</span>
+            </h1>
+          </div>
+          <ul className="flex flex-col gap-1 w-full mt-20">
+            <li>
+              <a href="/dashboard" className="w-full">
+                <Button
+                  className="cursor-pointer w-full justify-start"
+                  variant="ghost"
+                >
+                  <FileStack />
+                  {!open && "Mis Pros vs Contras"}
+                </Button>
+              </a>
+            </li>
+            <li>
+              <a href="/writeboard" className="w-full">
+                <Button
+                  className="cursor-pointer w-full justify-start"
+                  variant="ghost"
+                >
+                  <Plus />
+                  {!open && "Crear Pros vs Contras"}
+                </Button>
+              </a>
+            </li>
+            <li>
+              <a href="/profile" className="w-full">
+                <Button
+                  className="cursor-pointer w-full justify-start"
+                  variant="ghost"
+                >
+                  <User />
+                  {!open && "Perfil"}
+                </Button>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div
+          className={`flex gap-4 justify-center w-full p-4 rounded-t-2xl ${
+            !open && "bg-muted"
+          }`}
+        >
+          {!open && <UserButton />}
+          <SignOutButton>
+            <Button className="cursor-pointer" variant="outline">
+              <LogOut />
+              {!open && "Cerrar sesión"}
+            </Button>
+          </SignOutButton>
+        </div>
       </aside>
     </ClerkLayout>
   );
