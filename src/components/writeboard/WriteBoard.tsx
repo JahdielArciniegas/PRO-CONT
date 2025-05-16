@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { DndContext } from "@dnd-kit/core";
 import { Droppable } from "./Droppable";
 import DraggableItem from "./DraggableItem";
-import { pb } from "@/lib/pocketbase";
+import { pb } from "@src/lib/pocketbase";
 
 interface WriteBoardProps {
   userId: string;
@@ -22,6 +22,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   const [newActualInput, setNewActualInput] = useState("");
   const [suggestions, setSuggestions] = useState("No hay sugerencias");
   const [idInput, setIdInput] = useState("");
+  const [editTitle, setEditTitle] = useState(false);
 
   const board = async () => {
     await localStorage.removeItem("inputs");
@@ -169,14 +170,26 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
-      <div className="flex justify-center gap-2">
-        <input
-          type="text"
-          className="p-2 rounded-lg bg-[var(--muted)] "
-          placeholder="Escribe un Titulo para tu tabla"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
+      <div className="flex justify-center gap-4">
+        {!editTitle && title !== "" ? (
+          <h1
+            className="text-2xl cursor-pointer font-bold"
+            onClick={() => setEditTitle(true)}
+          >
+            {title}
+          </h1>
+        ) : (
+          <input
+            onFocus={() => setEditTitle(true)}
+            onBlur={() => setEditTitle(false)}
+            type="text"
+            className="p-2 text-2xl rounded-lg bg-[var(--muted)] "
+            placeholder="Escribe un Titulo para tu tabla"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        )}
+
         <button
           onClick={saveBoard}
           className="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"

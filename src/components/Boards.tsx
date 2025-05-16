@@ -1,5 +1,5 @@
-import type { Board } from "@/lib/types";
-import { pb } from "@/lib/pocketbase";
+import type { Board } from "@src/lib/types";
+import { pb } from "@src/lib/pocketbase";
 import { useEffect, useState, Suspense } from "react";
 
 const Boards = ({ userId }: { userId: string }) => {
