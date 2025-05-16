@@ -110,6 +110,28 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
     }
   };
 
+  const handleOpinion = async () => {
+    const response = await fetch("/api/opinion", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title,
+        pros: inputs
+          .filter((input) => input.status === "pros")
+          .map((input) => input.value)
+          .join(","),
+        cons: inputs
+          .filter((input) => input.status === "cons")
+          .map((input) => input.value)
+          .join(","),
+      }),
+    });
+    const data = await response.json();
+    setSuggestions(data.choices[0].message.content);
+  };
+
   const handleInputChange = () => {
     localStorage.setItem("title", title);
     if (idInput === "") {
@@ -160,6 +182,12 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
           className="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
         >
           Guardar
+        </button>
+        <button
+          onClick={handleOpinion}
+          className="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
+        >
+          Opinión
         </button>
       </div>
       <div className="flex h-[600px]">
