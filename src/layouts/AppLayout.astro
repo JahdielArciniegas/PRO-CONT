@@ -1,0 +1,15 @@
+---
+import Layout from "./Layout.astro";
+import AsideBar from "../components/common/AsideBar";
+---
+
+<Layout>
+  <section
+    class="w-full h-screen bg-[var(--background)] flex items-center justify-center"
+  >
+    <AsideBar client:only="react" />
+    <main class="flex-1">
+      <slot />
+    </main>
+  </section>
+</Layout>

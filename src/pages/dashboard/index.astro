@@ -2,6 +2,7 @@
 import Boards from "@src/components/Boards";
 import Layout from "@src/layouts/Layout.astro";
 import { UserButton } from "@clerk/astro/components";
+import AppLayout from "@src/layouts/AppLayout.astro";
 
 const { userId, redirectToSignIn } = Astro.locals.auth();
 if (!userId) {
@@ -9,35 +10,8 @@ if (!userId) {
 }
 ---
 
-<Layout>
-  <section
-    class="w-full h-screen bg-[var(--background)] flex items-center justify-center"
-  >
-    <div class="w-full h-full">
-      <div class="flex gap-4">
-        <div
-          class="w-64 shadow-2xl h-screen p-4 flex flex-col justify-center items-center"
-        >
-          <h3>Panel de control</h3>
-          <UserButton showName />
-          <p>Bienvenido a tu panel de control.</p>
-          <div>
-            <a href="/"
-              ><button
-                class="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
-                >Salir</button
-              ></a
-            >
-            <a href="/writeboard"
-              ><button
-                class="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
-                >Crear una nueva tabla</button
-              ></a
-            >
-          </div>
-        </div>
-        <Boards userId={userId} client:only="react" />
-      </div>
-    </div>
-  </section>
-</Layout>
+<AppLayout>
+  <div class="flex gap-4">
+    <Boards userId={userId} client:only="react" />
+  </div>
+</AppLayout>
