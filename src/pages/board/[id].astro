@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@src/components/ui/card";
 import { Button } from "@src/components/ui/button";
+import { XIcon, CheckIcon } from "lucide-react";
 
 const board = await pb.collection("boards").getOne(id as string);
 ---
@@ -26,7 +27,10 @@ const board = await pb.collection("boards").getOne(id as string);
             {
               board.pros.split(",").map((pro: string) => (
                 <li>
-                  <p class="text-xl">{pro}</p>
+                  <p class="text-xl flex gap-2 items-center">
+                    <CheckIcon className="text-green-500" />
+                    {pro}
+                  </p>
                 </li>
               ))
             }
@@ -42,7 +46,10 @@ const board = await pb.collection("boards").getOne(id as string);
             {
               board.cons.split(",").map((con: string) => (
                 <li>
-                  <p class="text-xl">{con}</p>
+                  <p class="text-xl flex gap-2 items-center">
+                    <XIcon className="text-red-500" />
+                    {con}
+                  </p>
                 </li>
               ))
             }

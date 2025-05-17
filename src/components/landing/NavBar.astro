@@ -1,9 +1,31 @@
+---
+import { Button } from "../ui/button";
+---
+
 <nav
-  class="w-full h-16 bg-[var(--foreground)] text-[var(--background)] flex justify-between items-center"
+  class="w-full h-16 bg-primary text-primary-foreground flex justify-between items-center"
 >
-  <ul class="flex flex-1 justify-around">
-    <li><a href="#service">Servicio</a></li>
-    <li><a href="#pricing">Precios</a></li>
-    <li><a href="#contact">Contacto</a></li>
+  <ul class="flex flex-1 justify-around gap-4">
+    <li>
+      <Button
+        variant="link"
+        className="cursor-pointer text-primary-foreground hover:text-primary-foreground/90"
+        ><a href="#service">Servicio</a></Button
+      >
+    </li>
+    <li>
+      <Button
+        variant="link"
+        className="cursor-pointer text-primary-foreground hover:text-primary-foreground/90"
+        ><a href="#pricing">Precios</a></Button
+      >
+    </li>
+    <li>
+      <Button
+        variant="link"
+        className="cursor-pointer text-primary-foreground hover:text-primary-foreground/90"
+        ><a href="#contact">Contacto</a>
+      </Button>
+    </li>
   </ul>
 </nav>

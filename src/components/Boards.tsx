@@ -75,7 +75,7 @@ const Boards = ({ userId }: { userId: string }) => {
                       ))}
                     </ul>
                   </div>
-                  <span className="w-[2px] h-52 bg-[var(--foreground)]"></span>
+                  <span className="w-0.5 h-52 bg-[var(--foreground)]"></span>
                   <div className="flex flex-col gap-2 w-1/2 h-52 p-4">
                     <h4 className="text-2xl font-bold text-center bg-red-500 rounded-lg">
                       Contras
@@ -90,7 +90,12 @@ const Boards = ({ userId }: { userId: string }) => {
               </Card>
             </li>
           ))}
+          {Array.from({ length: 4 - boards.length }).map((_, index) => (
+            <li key={index} className="invisible h-80"></li>
+          ))}
         </ul>
+        {boards.length === 0 && <p>No hay tableros</p>}
+
         <div className="flex gap-4 -mt-4 justify-center w-full z-10">
           <Button
             onClick={() => setPage(page - 1)}

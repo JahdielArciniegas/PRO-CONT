@@ -1,3 +1,7 @@
+---
+import { Button } from "../ui/button";
+---
+
 <section
   id="contact"
   class="w-full h-screen bg-[var(--muted)] flex flex-col items-center justify-center gap-4"
@@ -10,11 +14,6 @@
     <input type="text" placeholder="Nombre" class="p-2 rounded-lg" />
     <input type="email" placeholder="Email" class="p-2 rounded-lg" />
     <textarea placeholder="Mensaje" class="p-2 rounded-lg"></textarea>
-    <button
-      type="submit"
-      class="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
-    >
-      Enviar
-    </button>
+    <Button type="submit" className="cursor-pointer"> Enviar </Button>
   </form>
 </section>

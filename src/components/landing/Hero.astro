@@ -5,10 +5,11 @@ import {
   SignInButton,
   UserButton,
 } from "@clerk/astro/components";
+import { Button } from "../ui/button";
 ---
 
 <section
-  class="w-full h-screen bg-[var(--background)] flex flex-col items-center justify-center"
+  class="w-full h-screen bg-background flex flex-col items-center justify-center gap-4"
 >
   <h1 class="text-8xl font-bold">
     <span class="text-green-600">PRO</span>/<span class="text-red-500"
@@ -22,7 +23,7 @@ import {
   <SignedOut>
     <SignInButton
       mode="modal"
-      class="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
+      class="cursor-pointer p-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90"
     >
       Comienza Ahora
     </SignInButton>
@@ -30,11 +31,7 @@ import {
   <SignedIn>
     <UserButton showName={true} />
     <a href="/dashboard">
-      <button
-        class="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
-      >
-        Entrar a Dashboard
-      </button>
+      <Button className="cursor-pointer"> Entrar a Dashboard </Button>
     </a>
   </SignedIn>
 </section>

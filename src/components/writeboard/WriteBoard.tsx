@@ -78,6 +78,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
     });
     setLatestPetition(!latestPetition);
     const data = await response.json();
+    console.log(data);
     setSuggestions(data.choices[0].message.content);
   };
 
