@@ -1,7 +1,7 @@
 ---
 import { ModeToggle } from "@src/components/common/ModeToggle";
 import WriteBoard from "@src/components/writeboard/WriteBoard";
-import Layout from "@src/layouts/Layout.astro";
+import AppLayout from "@src/layouts/AppLayout.astro";
 
 const { userId, redirectToSignIn } = Astro.locals.auth();
 if (!userId) {
@@ -14,20 +14,8 @@ if (!id) {
 }
 ---
 
-<Layout>
-  <section class="w-full h-screen bg-[var(--background)] flex">
-    <div class="w-1/4 p-4 flex flex-col items-center justify-center shadow-2xl">
-      <h1>WriteBoard</h1>
-      <ModeToggle client:only="react" />
-      <a href="/dashboard"
-        ><button
-          class="p-2 rounded-lg bg-[var(--primary)] text-white cursor-pointer"
-          >Regresar</button
-        ></a
-      >
-    </div>
-    <div class="w-3/4 p-4">
-      <WriteBoard userId={userId} idBoard={id} client:only="react" />
-    </div>
-  </section>
-</Layout>
+<AppLayout>
+  <div class="w-3/4 p-4 h-full">
+    <WriteBoard userId={userId} idBoard={id} client:only="react" />
+  </div>
+</AppLayout>

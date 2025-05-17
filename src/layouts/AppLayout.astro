@@ -4,11 +4,9 @@ import AsideBar from "../components/common/AsideBar";
 ---
 
 <Layout>
-  <section
-    class="w-full h-screen bg-[var(--background)] flex items-center justify-center"
-  >
+  <section class="w-full h-screen bg-[var(--background)] flex">
     <AsideBar client:only="react" />
-    <main class="flex-1">
+    <main class="flex flex-1 items-center justify-center">
       <slot />
     </main>
   </section>
