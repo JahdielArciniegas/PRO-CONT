@@ -20,7 +20,7 @@ export function Draggable(props: any) {
       {...attributes}
       className="py-2 px-2 cursor-pointer flex items-center"
     >
-      <p>{props.children}</p>
+      <p className="flex gap-2 items-center">{props.children}</p>
     </Card>
   );
 }

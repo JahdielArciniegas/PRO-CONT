@@ -199,7 +199,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
               onFocus={() => setEditTitle(true)}
               onBlur={() => setEditTitle(false)}
               type="text"
-              className="p-2 text-2xl rounded-lg bg-[var(--muted)] "
+              className="p-2 text-2xl rounded-lg bg-muted "
               placeholder="Escribe un Titulo para tu tabla"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -293,7 +293,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
           <div className="flex gap-2 items-center">
             <input
               type="text"
-              className="p-2 rounded-lg bg-[var(--muted)] "
+              className="p-2 rounded-lg bg-muted "
               placeholder="Escribe un nuevo input"
               value={newActualInput}
               onChange={(e) => setNewActualInput(e.target.value)}
