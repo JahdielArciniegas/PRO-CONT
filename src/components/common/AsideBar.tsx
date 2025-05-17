@@ -11,7 +11,7 @@ const AsideBar = () => {
   return (
     <ClerkLayout>
       <aside
-        className={`shadow-2xl h-screen flex flex-col items-center justify-between transition-transform duration-300  ${
+        className={`shadow-page h-screen flex flex-col items-center justify-between transition-transform duration-300  ${
           open ? "w-16" : "w-64"
         }`}
       >

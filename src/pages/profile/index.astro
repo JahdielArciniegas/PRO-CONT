@@ -1,10 +1,11 @@
 ---
 import { UserProfile } from "@clerk/astro/components";
 import AppLayout from "@src/layouts/AppLayout.astro";
+import { dark } from "@clerk/themes";
 ---
 
 <AppLayout>
   <div class="flex items-center justify-center">
-    <UserProfile />
+    <UserProfile appearance={{ baseTheme: dark }} />
   </div>
 </AppLayout>
