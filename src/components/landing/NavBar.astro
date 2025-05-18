@@ -1,31 +1,48 @@
 ---
 import { Button } from "../ui/button";
+import {
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/astro/components";
 ---
 
 <nav
-  class="w-full h-16 bg-primary text-primary-foreground flex justify-between items-center"
+  class="fixed top-0 w-full h-16 bg-muted text-primary flex justify-around items-center z-50"
 >
-  <ul class="flex flex-1 justify-around gap-4">
+  <div>
+    <h1>PRO/CONT</h1>
+  </div>
+  <ul class="flex gap-4">
     <li>
-      <Button
-        variant="link"
-        className="cursor-pointer text-primary-foreground hover:text-primary-foreground/90"
+      <Button variant="link" className="cursor-pointer  hover:text-primary/90"
         ><a href="#service">Servicio</a></Button
       >
     </li>
     <li>
-      <Button
-        variant="link"
-        className="cursor-pointer text-primary-foreground hover:text-primary-foreground/90"
+      <Button variant="link" className="cursor-pointer  hover:text-primary/90"
         ><a href="#pricing">Precios</a></Button
       >
     </li>
     <li>
-      <Button
-        variant="link"
-        className="cursor-pointer text-primary-foreground hover:text-primary-foreground/90"
+      <Button variant="link" className="cursor-pointer  hover:text-primary/90"
         ><a href="#contact">Contacto</a>
       </Button>
     </li>
+    <SignedOut>
+      <SignInButton
+        mode="modal"
+        class="cursor-pointer p-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90"
+      >
+        Comienza Ahora
+      </SignInButton>
+    </SignedOut>
+    <SignedIn>
+      <UserButton showName={true} />
+      <a href="/dashboard">
+        <Button className="cursor-pointer"> Entrar a Dashboard </Button>
+      </a>
+    </SignedIn>
   </ul>
 </nav>
