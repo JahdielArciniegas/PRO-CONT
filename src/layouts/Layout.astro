@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import Notification from "../components/common/Notification";
 ---
 
 <!doctype html>
@@ -12,6 +13,7 @@ import "../styles/global.css";
     <title>PRO/CONT</title>
   </head>
   <body class="m-0 w-full min-h-screen bg-background">
+    <Notification client:only="react" />
     <slot />
   </body>
 </html>

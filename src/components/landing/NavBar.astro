@@ -1,4 +1,5 @@
 ---
+import { ModeToggle } from "../common/ModeToggle";
 import { Button } from "../ui/button";
 import {
   SignInButton,
@@ -11,7 +12,8 @@ import {
 <nav
   class="fixed top-0 w-full h-16 bg-muted text-primary flex justify-around items-center z-50"
 >
-  <div>
+  <div class="flex gap-4 items-center">
+    <ModeToggle client:load />
     <h1>PRO/CONT</h1>
   </div>
   <ul class="flex gap-4">
@@ -39,7 +41,7 @@ import {
       </SignInButton>
     </SignedOut>
     <SignedIn>
-      <UserButton showName={true} />
+      <UserButton />
       <a href="/dashboard">
         <Button className="cursor-pointer"> Entrar a Dashboard </Button>
       </a>

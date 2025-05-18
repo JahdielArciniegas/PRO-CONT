@@ -19,6 +19,7 @@ import {
   MessageCircleQuestion,
   Trash,
 } from "lucide-react";
+import { useNotificationStore } from "@src/lib/store";
 
 interface WriteBoardProps {
   userId: string;
@@ -36,35 +37,52 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   const [title, setTitle] = useState("");
   const [statusEdit, setStatusEdit] = useState(false);
   const [newActualInput, setNewActualInput] = useState("");
-  const [suggestions, setSuggestions] = useState("No hay sugerencias");
   const [idInput, setIdInput] = useState("");
   const [editTitle, setEditTitle] = useState(false);
-  const [latestPetition, setLatestPetition] = useState(true);
   const [opinion, setOpinion] = useState<string | null>(null);
+  const { addNotification } = useNotificationStore();
 
+  // const [suggestions, setSuggestions] = useState("No hay sugerencias");
+  // const [latestPetition, setLatestPetition] = useState(true);
   const board = async () => {
-    await localStorage.removeItem("inputs");
-    await localStorage.removeItem("title");
-    const board = await pb.collection("boards").getOne(idBoard);
-    setTitle(board.title);
-    const storedInputsPros = board.pros.split(",").map((input: string) => ({
-      id: crypto.randomUUID(),
-      value: input,
-      status: "pros",
-    }));
-    const storedInputsCons = board.cons.split(",").map((input: string) => ({
-      id: crypto.randomUUID(),
-      value: input,
-      status: "cons",
-    }));
-    const storedInputs = [...storedInputsPros, ...storedInputsCons];
-    setInputs(storedInputs);
-    localStorage.setItem("inputs", JSON.stringify(storedInputs));
-    localStorage.setItem("title", board.title);
-    localStorage.setItem("idEdit", idBoard);
-    setStatusEdit(true);
+    try {
+      localStorage.removeItem("inputs");
+      localStorage.removeItem("title");
+      addNotification({
+        message: "Cargando Tabla",
+        type: "info",
+      });
+      const board = await pb.collection("boards").getOne(idBoard);
+      setTitle(board.title);
+      const storedInputsPros = board.pros.split(",").map((input: string) => ({
+        id: crypto.randomUUID(),
+        value: input,
+        status: "pros",
+      }));
+      const storedInputsCons = board.cons.split(",").map((input: string) => ({
+        id: crypto.randomUUID(),
+        value: input,
+        status: "cons",
+      }));
+      const storedInputs = [...storedInputsPros, ...storedInputsCons];
+      setInputs(storedInputs);
+      localStorage.setItem("inputs", JSON.stringify(storedInputs));
+      localStorage.setItem("title", board.title);
+      localStorage.setItem("idEdit", idBoard);
+      setStatusEdit(true);
+      addNotification({
+        message: "Tabla cargada exitosamente",
+        type: "success",
+      });
+    } catch (error) {
+      addNotification({
+        message: "Error al cargar la tabla",
+        type: "error",
+      });
+    }
   };
 
+  /* Manejo de Sugerencias - No implementado  
   const handleSuggest = async () => {
     const response = await fetch("/api/suggest", {
       method: "POST",
@@ -81,23 +99,23 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
     console.log(data);
     setSuggestions(data.choices[0].message.content);
   };
-
+*/
   useEffect(() => {
     if (idBoard !== "") {
-      board();
-    } else {
       if (localStorage.getItem("idEdit") !== idBoard) {
         localStorage.removeItem("inputs");
         localStorage.removeItem("title");
         localStorage.removeItem("idEdit");
       }
+      board();
+    } else {
       const storedInputs = localStorage.getItem("inputs");
       const storedTitle = localStorage.getItem("title");
       if (storedInputs) {
         setInputs(JSON.parse(storedInputs));
       }
       if (storedTitle) {
-        setTitle(JSON.parse(storedTitle));
+        setTitle(storedTitle);
       }
     }
   }, []);
@@ -118,46 +136,58 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
 
     if (statusEdit) {
       await pb.collection("boards").update(idBoard, board);
-      localStorage.removeItem("inputs");
-      localStorage.removeItem("title");
-      localStorage.removeItem("idEdit");
-      window.location.href = "/dashboard";
     } else {
       await pb.collection("boards").create(board);
-      localStorage.removeItem("inputs");
-      localStorage.removeItem("title");
-      localStorage.removeItem("idEdit");
-      window.location.href = "/dashboard";
     }
+    localStorage.removeItem("inputs");
+    localStorage.removeItem("title");
+    localStorage.removeItem("idEdit");
+    window.location.href = "/dashboard";
   };
 
   const handleOpinion = async () => {
     if (opinion) setOpinion(null);
-    const response = await fetch("/api/opinion", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        pros: inputs
-          .filter((input) => input.status === "pros")
-          .map((input) => input.value)
-          .join(","),
-        cons: inputs
-          .filter((input) => input.status === "cons")
-          .map((input) => input.value)
-          .join(","),
-      }),
-    });
-    const data = await response.json();
-    setOpinion(data.choices[0].message.content);
+    const pros = inputs
+      .filter((input) => input.status === "pros")
+      .map((input) => input.value)
+      .join(",");
+    const cons = inputs
+      .filter((input) => input.status === "cons")
+      .map((input) => input.value)
+      .join(",");
+    try {
+      const response = await fetch("/api/opinion", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          pros,
+          cons,
+        }),
+      });
+      const data = await response.json();
+      setOpinion(data.choices[0].message.content);
+      addNotification({
+        message: "Opinion obtenida exitosamente",
+        type: "success",
+      });
+    } catch (error) {
+      addNotification({
+        message: "Error al obtener la opinion",
+        type: "error",
+      });
+    }
   };
 
   const handleInputChange = () => {
     localStorage.setItem("title", title);
+
+    let updatedInputs;
+
     if (idInput === "") {
-      const newInput = [
+      updatedInputs = [
         ...inputs,
         {
           id: crypto.randomUUID(),
@@ -165,21 +195,15 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
           status: "new",
         },
       ];
-      setInputs(newInput);
-      localStorage.setItem("inputs", JSON.stringify(newInput));
     } else {
-      const newValue = inputs.map((input) => {
-        if (input.id === idInput) {
-          return {
-            ...input,
-            value: newActualInput,
-          };
-        }
-        return input;
-      });
-      setInputs(newValue);
-      localStorage.setItem("inputs", JSON.stringify(newValue));
+      updatedInputs = inputs.map((input) =>
+        input.id === idInput ? { ...input, value: newActualInput } : input
+      );
     }
+
+    setInputs(updatedInputs);
+    localStorage.setItem("inputs", JSON.stringify(updatedInputs));
+
     setNewActualInput("");
     setIdInput("");
   };
@@ -222,9 +246,6 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
                 {opinion ? (
                   <div className="flex flex-col gap-2">
                     <DialogDescription>{opinion}</DialogDescription>
-                    <Button onClick={handleOpinion} className="cursor-pointer">
-                      Generar Opinión <MessageCircleQuestion />
-                    </Button>
                   </div>
                 ) : (
                   <DialogDescription>Loading...</DialogDescription>
@@ -316,12 +337,13 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
               cancelar
             </Button>
           </div>
-          <div className="flex gap-2 items-center">
+          {/* Manejo de Sugerencias - No implementado */}
+          {/* <div className="flex gap-2 items-center">
             <p className="w-64 p-2">{suggestions}</p>
             <Button onClick={handleSuggest} className=" cursor-pointer">
               <HandHelping /> Sugerencia
             </Button>
-          </div>
+          </div> */}
         </Card>
       </div>
     </DndContext>
@@ -336,16 +358,38 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
 
     const newField = inputs.map((input) => {
       if (input.id === active.id) {
-        setIdInput(input.id);
-        setNewActualInput(input.value);
-        return { ...input, status: over.id };
+        try {
+          setIdInput(input.id);
+          setNewActualInput(input.value);
+          addNotification({
+            message: "Input movido exitosamente",
+            type: "info",
+          });
+          return { ...input, status: over.id };
+        } catch (error) {
+          addNotification({
+            message: "Error al mover el input",
+            type: "error",
+          });
+        }
       }
       return input;
     });
     if (over.id === "Delete") {
-      setInputs(newField.filter((input) => input.id !== active.id));
-      setNewActualInput("");
-      setIdInput("");
+      try {
+        setInputs(newField.filter((input) => input.id !== active.id));
+        setNewActualInput("");
+        setIdInput("");
+        addNotification({
+          message: "Input eliminado exitosamente",
+          type: "success",
+        });
+      } catch (error) {
+        addNotification({
+          message: "Error al eliminar el input",
+          type: "error",
+        });
+      }
     }
     setInputs(newField);
     localStorage.setItem("inputs", JSON.stringify(newField));

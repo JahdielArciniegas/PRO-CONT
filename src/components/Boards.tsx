@@ -4,20 +4,33 @@ import { useEffect, useState, Suspense } from "react";
 import { Card, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Trash, ArrowLeft, ArrowRight } from "lucide-react";
+import { useNotificationStore } from "@src/lib/store";
 
 const Boards = ({ userId }: { userId: string }) => {
   const [boards, setBoard] = useState<Board[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const { addNotification } = useNotificationStore();
   useEffect(() => {
-    const boards = async () => {
-      const board = await pb.collection("boards").getList<Board>(page, 4, {
-        filter: `id_user = "${userId}"`,
+    try {
+      const boards = async () => {
+        const board = await pb.collection("boards").getList<Board>(page, 4, {
+          filter: `id_user = "${userId}"`,
+        });
+        setBoard(board.items);
+        setTotal(board.totalPages);
+      };
+      boards();
+      addNotification({
+        message: "Tablas cargadas exitosamente",
+        type: "success",
       });
-      setBoard(board.items);
-      setTotal(board.totalPages);
-    };
-    boards();
+    } catch (error) {
+      addNotification({
+        message: "Error al cargar las tablas",
+        type: "error",
+      });
+    }
   }, [page]);
 
   const handleDelete = async (id: string) => {
@@ -27,8 +40,15 @@ const Boards = ({ userId }: { userId: string }) => {
         filter: `id_user = "${userId}"`,
       });
       setBoard(boards.items);
+      addNotification({
+        message: "Tabla eliminada exitosamente",
+        type: "success",
+      });
     } catch (error) {
-      console.log(error);
+      addNotification({
+        message: "Error al eliminar la tabla",
+        type: "error",
+      });
     }
   };
 
