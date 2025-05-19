@@ -116,7 +116,7 @@ const Boards = ({ userId }: { userId: string }) => {
             </li>
           ))}
           {Array.from({ length: 4 - boards.length }).map((_, index) => (
-            <li key={index} className="invisible h-48 sm:h-80"></li>
+            <li key={index} className="invisible h-40 sm:h-80"></li>
           ))}
         </ul>
         {boards.length === 0 && <p>No hay tableros</p>}

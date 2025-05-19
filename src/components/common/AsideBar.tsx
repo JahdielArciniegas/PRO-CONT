@@ -12,7 +12,7 @@ const AsideBar = () => {
     <ClerkLayout>
       <aside
         className={`shadow-page h-screen flex flex-col items-center justify-between transition-transform duration-300  ${
-          open ? "w-16" : "w-64"
+          open ? " lg:w-16 w-0" : "lg:w-64 w-16"
         }`}
       >
         <div className="flex flex-col gap-8 p-4">
@@ -30,7 +30,11 @@ const AsideBar = () => {
               <span className="text-red-500">CONT</span>
             </h1>
           </div>
-          <ul className="flex flex-col gap-1 w-full mt-20">
+          <ul
+            className={`flex flex-col gap-1 w-full mt-20 ${
+              open ? "hidden lg:flex" : "flex"
+            }`}
+          >
             <li>
               <a href="/dashboard" className="w-full">
                 <Button
@@ -38,7 +42,9 @@ const AsideBar = () => {
                   variant="ghost"
                 >
                   <FileStack />
-                  {!open && "Mis Pros vs Contras"}
+                  {!open && (
+                    <p className="hidden lg:block">Mis Pros y Contras</p>
+                  )}
                 </Button>
               </a>
             </li>
@@ -49,7 +55,9 @@ const AsideBar = () => {
                   variant="ghost"
                 >
                   <Plus />
-                  {!open && "Crear Pros vs Contras"}
+                  {!open && (
+                    <p className="hidden lg:block">Crear Pros vs Contras</p>
+                  )}
                 </Button>
               </a>
             </li>
@@ -60,7 +68,7 @@ const AsideBar = () => {
                   variant="ghost"
                 >
                   <User />
-                  {!open && "Perfil"}
+                  {!open && <p className="hidden lg:block">Perfil</p>}
                 </Button>
               </a>
             </li>
@@ -69,14 +77,14 @@ const AsideBar = () => {
 
         <div
           className={`flex gap-4 justify-center w-full p-4 rounded-t-2xl ${
-            !open && "bg-muted"
+            !open ? "bg-muted flex-col lg:flex-row " : "hidden lg:flex"
           }`}
         >
           {!open && <UserButton />}
           <SignOutButton>
             <Button className="cursor-pointer" variant="outline">
               <LogOut />
-              {!open && "Cerrar sesión"}
+              {!open && <p className="hidden lg:block">Cerrar sesión</p>}
             </Button>
           </SignOutButton>
         </div>
