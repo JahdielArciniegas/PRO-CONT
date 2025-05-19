@@ -1,11 +1,10 @@
 import type { Board } from "@src/lib/types";
-import { pb } from "@src/lib/pocketbase";
 import { useEffect, useState, Suspense } from "react";
 import { Card, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Trash, ArrowLeft, ArrowRight } from "lucide-react";
 import { useNotificationStore } from "@src/lib/store";
-
+import { deleteBoard, getBoards } from "@src/lib/pocketbase";
 const Boards = ({ userId }: { userId: string }) => {
   const [boards, setBoard] = useState<Board[]>([]);
   const [page, setPage] = useState(1);
@@ -14,9 +13,7 @@ const Boards = ({ userId }: { userId: string }) => {
   useEffect(() => {
     try {
       const boards = async () => {
-        const board = await pb.collection("boards").getList<Board>(page, 4, {
-          filter: `id_user = "${userId}"`,
-        });
+        const board = await getBoards(userId, page);
         setBoard(board.items);
         setTotal(board.totalPages);
       };
@@ -35,10 +32,8 @@ const Boards = ({ userId }: { userId: string }) => {
 
   const handleDelete = async (id: string) => {
     try {
-      await pb.collection("boards").delete(id);
-      const boards = await pb.collection("boards").getList<Board>(page, 4, {
-        filter: `id_user = "${userId}"`,
-      });
+      await deleteBoard(id);
+      const boards = await getBoards(userId, page);
       setBoard(boards.items);
       addNotification({
         message: "Tabla eliminada exitosamente",

@@ -1,4 +1,5 @@
 export interface CreateBoard {
+  id_user: string;
   title: string;
   pros: string;
   cons: string;

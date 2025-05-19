@@ -1,10 +1,13 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { DndContext } from "@dnd-kit/core";
 import { Droppable } from "./Droppable";
 import DraggableItem from "./DraggableItem";
-import { pb } from "@src/lib/pocketbase";
+import { updateBoard, createBoard, getBoard } from "@src/lib/pocketbase";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
+
+import { useAuth } from "@clerk/clerk-react";
+
 import {
   Dialog,
   DialogContent,
@@ -13,13 +16,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import {
-  HandHelping,
-  ArrowDownToLine,
-  MessageCircleQuestion,
-  Trash,
-} from "lucide-react";
+import { ArrowDownToLine, MessageCircleQuestion, Trash } from "lucide-react";
 import { useNotificationStore } from "@src/lib/store";
+import type { Board } from "@src/lib/types";
 
 interface WriteBoardProps {
   userId: string;
@@ -52,7 +51,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
         message: "Cargando Tabla",
         type: "info",
       });
-      const board = await pb.collection("boards").getOne(idBoard);
+      const board = await getBoard(idBoard);
       setTitle(board.title);
       const storedInputsPros = board.pros.split(",").map((input: string) => ({
         id: crypto.randomUUID(),
@@ -121,7 +120,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   }, []);
 
   const saveBoard = async () => {
-    const board = {
+    const board: Partial<Board> = {
       id_user: userId,
       title,
       pros: inputs
@@ -135,9 +134,9 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
     };
 
     if (statusEdit) {
-      await pb.collection("boards").update(idBoard, board);
+      updateBoard(idBoard, title);
     } else {
-      await pb.collection("boards").create(board);
+      createBoard(board as Board);
     }
     localStorage.removeItem("inputs");
     localStorage.removeItem("title");
@@ -264,7 +263,11 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
                     inputs
                       .filter((input) => input.status === "pros")
                       .map((input) => (
-                        <DraggableItem key={input.id} input={input} />
+                        <DraggableItem
+                          key={input.id}
+                          input={input}
+                          select={input.value === newActualInput}
+                        />
                       ))
                   ) : (
                     <p>No hay Pros</p>
@@ -280,7 +283,11 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
                     inputs
                       .filter((input) => input.status === "cons")
                       .map((input) => (
-                        <DraggableItem key={input.id} input={input} />
+                        <DraggableItem
+                          key={input.id}
+                          input={input}
+                          select={input.value === newActualInput}
+                        />
                       ))
                   ) : (
                     <p>No hay Contras</p>
@@ -295,7 +302,11 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
                 inputs
                   .filter((input) => input.status === "new")
                   .map((input) => (
-                    <DraggableItem key={input.id} input={input} />
+                    <DraggableItem
+                      key={input.id}
+                      input={input}
+                      select={input.value === newActualInput}
+                    />
                   ))
               ) : (
                 <p>No hay inputs</p>
@@ -322,9 +333,11 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
             />
             <Button
               onClick={handleInputChange}
-              className="p-2 rounded-lg bg-[var(--primary)]  cursor-pointer"
+              className={`cursor-pointer ${
+                idInput === "" ? "bg-green-500 text-white" : ""
+              }`}
             >
-              Agregar
+              {idInput === "" ? "Agregar" : "Editar"}
             </Button>
             <Button
               onClick={() => {
@@ -361,10 +374,6 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
         try {
           setIdInput(input.id);
           setNewActualInput(input.value);
-          addNotification({
-            message: "Input movido exitosamente",
-            type: "info",
-          });
           return { ...input, status: over.id };
         } catch (error) {
           addNotification({

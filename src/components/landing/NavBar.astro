@@ -7,16 +7,18 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/astro/components";
+import { DoorOpen } from "lucide-react";
 ---
 
 <nav
   class="fixed top-0 w-full h-16 bg-muted text-primary flex justify-around items-center z-50"
 >
-  <div class="flex gap-4 items-center">
+  <div class="flex gap-2 sm:gap-4 items-center">
     <ModeToggle client:load />
-    <h1>PRO/CONT</h1>
+    <h1 class="hidden sm:block">PRO/CONT</h1>
+    <h1 class="block sm:hidden">P/C</h1>
   </div>
-  <ul class="flex gap-4">
+  <ul class="flex gap-1 sm:gap-4">
     <li>
       <Button variant="link" className="cursor-pointer  hover:text-primary/90"
         ><a href="#service">Servicio</a></Button
@@ -43,7 +45,10 @@ import {
     <SignedIn>
       <UserButton />
       <a href="/dashboard">
-        <Button className="cursor-pointer"> Entrar a Dashboard </Button>
+        <Button className="cursor-pointer ">
+          <DoorOpen />
+          <p class="hidden sm:block">Entrar a Dashboard</p>
+        </Button>
       </a>
     </SignedIn>
   </ul>

@@ -18,7 +18,9 @@ export function Draggable(props: any) {
       style={style}
       {...listeners}
       {...attributes}
-      className="py-2 px-2 cursor-pointer flex items-center"
+      className={`py-2 px-2 cursor-pointer flex items-center ${
+        props.select ? "bg-primary text-primary-foreground" : ""
+      }`}
     >
       <p className="flex gap-2 items-center">{props.children}</p>
     </Card>
