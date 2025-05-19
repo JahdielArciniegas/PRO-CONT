@@ -2,11 +2,16 @@ import { useEffect, useState } from "react";
 import { DndContext } from "@dnd-kit/core";
 import { Droppable } from "./Droppable";
 import DraggableItem from "./DraggableItem";
-import { updateBoard, createBoard, getBoard } from "@src/lib/pocketbase";
+import {
+  updateBoard,
+  createBoard,
+  getBoard,
+  getUserIa,
+  getLengthBoards,
+  addUserIa,
+} from "@src/lib/pocketbase";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
-
-import { useAuth } from "@clerk/clerk-react";
 
 import {
   Dialog,
@@ -18,18 +23,7 @@ import {
 } from "../ui/dialog";
 import { ArrowDownToLine, MessageCircleQuestion, Trash } from "lucide-react";
 import { useNotificationStore } from "@src/lib/store";
-import type { Board } from "@src/lib/types";
-
-interface WriteBoardProps {
-  userId: string;
-  idBoard?: string;
-}
-
-interface content {
-  id: string;
-  value: string;
-  status: string;
-}
+import type { Board, content, userIa, WriteBoardProps } from "@src/lib/types";
 
 const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   const [inputs, setInputs] = useState<content[]>([]);
@@ -45,8 +39,6 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   // const [latestPetition, setLatestPetition] = useState(true);
   const board = async () => {
     try {
-      localStorage.removeItem("inputs");
-      localStorage.removeItem("title");
       addNotification({
         message: "Cargando Tabla",
         type: "info",
@@ -100,12 +92,16 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   };
 */
   useEffect(() => {
+    const idEdit = localStorage.getItem("idEdit");
+    if (idEdit) {
+      localStorage.removeItem("inputs");
+      localStorage.removeItem("title");
+      localStorage.removeItem("idEdit");
+    }
     if (idBoard !== "") {
-      if (localStorage.getItem("idEdit") !== idBoard) {
-        localStorage.removeItem("inputs");
-        localStorage.removeItem("title");
-        localStorage.removeItem("idEdit");
-      }
+      localStorage.removeItem("inputs");
+      localStorage.removeItem("title");
+      localStorage.removeItem("idEdit");
       board();
     } else {
       const storedInputs = localStorage.getItem("inputs");
@@ -120,63 +116,86 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   }, []);
 
   const saveBoard = async () => {
-    const board: Partial<Board> = {
-      id_user: userId,
-      title,
-      pros: inputs
-        .filter((input) => input.status === "pros")
-        .map((input) => input.value)
-        .join(","),
-      cons: inputs
-        .filter((input) => input.status === "cons")
-        .map((input) => input.value)
-        .join(","),
-    };
-
-    if (statusEdit) {
-      updateBoard(idBoard, title);
+    const lengthBoards = await getLengthBoards(userId);
+    if (lengthBoards >= 5) {
+      addNotification({
+        message: "Solo puedes tener 5 tablas",
+        type: "error",
+      });
+      return;
     } else {
-      createBoard(board as Board);
+      const board: Partial<Board> = {
+        id_user: userId,
+        title,
+        pros: inputs
+          .filter((input) => input.status === "pros")
+          .map((input) => input.value)
+          .join(","),
+        cons: inputs
+          .filter((input) => input.status === "cons")
+          .map((input) => input.value)
+          .join(","),
+      };
+
+      if (statusEdit) {
+        updateBoard(idBoard, title);
+      } else {
+        createBoard(board as Board);
+      }
+      localStorage.removeItem("inputs");
+      localStorage.removeItem("title");
+      localStorage.removeItem("idEdit");
+      window.location.href = "/dashboard";
     }
-    localStorage.removeItem("inputs");
-    localStorage.removeItem("title");
-    localStorage.removeItem("idEdit");
-    window.location.href = "/dashboard";
   };
 
   const handleOpinion = async () => {
-    if (opinion) setOpinion(null);
-    const pros = inputs
-      .filter((input) => input.status === "pros")
-      .map((input) => input.value)
-      .join(",");
-    const cons = inputs
-      .filter((input) => input.status === "cons")
-      .map((input) => input.value)
-      .join(",");
-    try {
-      const response = await fetch("/api/opinion", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          pros,
-          cons,
-        }),
-      });
-      const data = await response.json();
-      setOpinion(data.choices[0].message.content);
+    const userIA = await getUserIa(userId);
+    if (userIA) {
       addNotification({
-        message: "Opinion obtenida exitosamente",
-        type: "success",
-      });
-    } catch (error) {
-      addNotification({
-        message: "Error al obtener la opinion",
+        message: "El usuario ya tiene IA",
         type: "error",
       });
+      return;
+    } else {
+      if (opinion) setOpinion(null);
+      const pros = inputs
+        .filter((input) => input.status === "pros")
+        .map((input) => input.value)
+        .join(",");
+      const cons = inputs
+        .filter((input) => input.status === "cons")
+        .map((input) => input.value)
+        .join(",");
+      try {
+        const response = await fetch("/api/opinion", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title,
+            pros,
+            cons,
+            userIA,
+          }),
+        });
+        const data = await response.json();
+        setOpinion(data.choices[0].message.content);
+        const userIa: Partial<userIa> = {
+          userId,
+        };
+        await addUserIa(userIa as userIa);
+        addNotification({
+          message: "Opinion obtenida exitosamente",
+          type: "success",
+        });
+      } catch (error) {
+        addNotification({
+          message: "Error al obtener la opinion",
+          type: "error",
+        });
+      }
     }
   };
 
@@ -209,7 +228,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
-      <div className="relative h-full flex flex-col gap-4">
+      <div className="relative h-11/12 lg:h-full flex flex-col gap-4 mt-10 lg:mt-0">
         <div className="flex justify-center items-center gap-4">
           {!editTitle && title !== "" ? (
             <h1
@@ -253,8 +272,8 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
             </DialogContent>
           </Dialog>
         </div>
-        <div className="flex flex-col h-auto max-h-[calc(100vh-200px)] overflow-y-auto no-scrollbar gap-4">
-          <div className="flex gap-4">
+        <div className="flex flex-col h-auto max-h-[calc(100vh-200px)] overflow-y-auto no-scrollbar gap-2 lg:gap-4">
+          <div className="flex gap-2 lg:gap-4">
             <Card className="w-1/2 flex flex-col items-center flex-1">
               <h3 className="text-2xl font-bold">Pros</h3>
               <Droppable id="pros">
@@ -323,7 +342,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
         </div>
 
         <Card className="absolute bottom-4 self-center flex flex-col gap-2 justify-center w-full items-center">
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-2 items-center flex-col sm:flex-row">
             <input
               type="text"
               className="p-2 rounded-lg bg-muted "

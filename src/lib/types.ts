@@ -10,3 +10,19 @@ export interface Board extends CreateBoard {
   collectionName: string;
   id: string;
 }
+
+export interface WriteBoardProps {
+  userId: string;
+  idBoard?: string;
+}
+
+export interface content {
+  id: string;
+  value: string;
+  status: string;
+}
+
+export interface userIa {
+  id: string;
+  userId: String;
+}

@@ -1,7 +1,6 @@
 ---
 import AppLayout from "@src/layouts/AppLayout.astro";
 const { id } = Astro.params;
-import { pb } from "@src/lib/pocketbase";
 import {
   Card,
   CardContent,
@@ -10,17 +9,19 @@ import {
 } from "@src/components/ui/card";
 import { Button } from "@src/components/ui/button";
 import { XIcon, CheckIcon } from "lucide-react";
+import { getBoard } from "@src/lib/pocketbase";
 
-const board = await pb.collection("boards").getOne(id as string);
+const board = await getBoard(id as string);
 ---
 
 <AppLayout>
-  <div class="w-3/4 h-full p-4 flex flex-col gap-4">
-    <h2 class="text-4xl font-bold text-center">{board.title}</h2>
+  <div class="w-3/4 h-10/12 lg:h-full p-4 flex flex-col gap-4">
+    <h2 class="text-2xl lg:text-4xl font-bold text-center">{board.title}</h2>
     <div class="flex gap-4 w-full flex-1">
-      <Card className="w-1/2  ">
+      <Card className="w-1/2">
         <CardHeader>
-          <CardTitle className="text-center text-2xl">Pros</CardTitle>
+          <CardTitle className="text-center text-xl lg:text-2xl">Pros</CardTitle
+          >
         </CardHeader>
         <CardContent>
           <ul class="flex flex-col gap-6">
@@ -39,14 +40,16 @@ const board = await pb.collection("boards").getOne(id as string);
       </Card>
       <Card className="w-1/2 ">
         <CardHeader>
-          <CardTitle className="text-center text-2xl">Contras</CardTitle>
+          <CardTitle className="text-center text-xl lg:text-2xl"
+            >Contras</CardTitle
+          >
         </CardHeader>
         <CardContent>
           <ul class="flex flex-col gap-6">
             {
               board.cons.split(",").map((con: string) => (
                 <li>
-                  <p class="text-xl flex gap-2 items-center">
+                  <p class="text-base lg:text-xl flex gap-2 items-center">
                     <XIcon className="text-red-500" />
                     {con}
                   </p>
