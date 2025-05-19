@@ -58,12 +58,12 @@ const Boards = ({ userId }: { userId: string }) => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="relative flex flex-col gap-4 w-full">
-        <ul className="p-4 pt-12 grid grid-cols-2 grid-row-2 gap-4 ">
+        <ul className="p-4 pt-12 grid sm:grid-cols-2 grid-cols-1 grid-row-2 sm:gap-4 gap-2">
           {boards.map((board) => (
             <li key={board.id}>
-              <Card className="h-80">
+              <Card className="sm:h-80 h-40">
                 <CardHeader className="">
-                  <CardTitle className="text-3xl flex gap-2 items-center justify-center text-center">
+                  <CardTitle className="lg:text-3xl h-12 text-xl flex gap-2 items-center justify-center text-center">
                     <a
                       className="hover:text-muted-foreground transition-colors duration-300"
                       href={`/board/${board.id}`}
@@ -79,25 +79,35 @@ const Boards = ({ userId }: { userId: string }) => {
                     </Button>
                   </CardTitle>
                 </CardHeader>
-                <div className="flex gap-4">
-                  <div className="flex flex-col gap-2 w-1/2 h-52 p-4">
-                    <h4 className="text-2xl font-bold text-center bg-green-500 rounded-lg">
+                <div className="flex sm:gap-4 gap-2">
+                  <div className="flex flex-col gap-2 w-1/2 sm:h-52 h-24 sm:p-4 p-2 ">
+                    <h4 className="sm:text-2xl text-lg w-24 sm:w-auto mx-auto sm:m-0 font-bold text-center bg-green-500 rounded-lg">
                       Pros
                     </h4>
-                    <ul className="flex flex-col gap-2  h-52 p-4 overflow-y-auto no-scrollbar ">
+                    <ul className="hidden sm:flex flex-col gap-2 sm:h-52 h-32 p-4 overflow-y-auto  no-scrollbar">
                       {ExtraerPros(board).map((pros: string) => (
-                        <li key={Math.random()}>{pros}</li>
+                        <li
+                          key={Math.random()}
+                          className="text-sm sm:text-base"
+                        >
+                          {pros}
+                        </li>
                       ))}
                     </ul>
                   </div>
-                  <span className="w-0.5 h-52 bg-[var(--foreground)]"></span>
-                  <div className="flex flex-col gap-2 w-1/2 h-52 p-4">
-                    <h4 className="text-2xl font-bold text-center bg-red-500 rounded-lg">
+                  <span className="w-0.5 sm:h-52 h-12 bg-foreground"></span>
+                  <div className="flex flex-col gap-2 w-1/2 sm:h-52 h-24 sm:p-4 p-2">
+                    <h4 className="sm:text-2xl text-lg w-24 sm:w-auto mx-auto sm:m-0  font-bold text-center bg-red-500 rounded-lg">
                       Contras
                     </h4>
-                    <ul className="flex flex-col gap-2 h-52 p-4 overflow-y-auto no-scrollbar">
+                    <ul className="hidden sm:flex flex-col gap-2 h-52 p-4 overflow-y-auto no-scrollbar">
                       {ExtraerCons(board).map((cons: string) => (
-                        <li key={Math.random()}>{cons}</li>
+                        <li
+                          key={Math.random()}
+                          className="text-sm sm:text-base"
+                        >
+                          {cons}
+                        </li>
                       ))}
                     </ul>
                   </div>
@@ -106,7 +116,7 @@ const Boards = ({ userId }: { userId: string }) => {
             </li>
           ))}
           {Array.from({ length: 4 - boards.length }).map((_, index) => (
-            <li key={index} className="invisible h-80"></li>
+            <li key={index} className="invisible h-48 sm:h-80"></li>
           ))}
         </ul>
         {boards.length === 0 && <p>No hay tableros</p>}

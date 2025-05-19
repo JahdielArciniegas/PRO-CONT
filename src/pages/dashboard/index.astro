@@ -11,7 +11,5 @@ if (!userId) {
 ---
 
 <AppLayout>
-  <div class="flex gap-4">
-    <Boards userId={userId} client:only="react" />
-  </div>
+  <Boards userId={userId} client:only="react" />
 </AppLayout>
