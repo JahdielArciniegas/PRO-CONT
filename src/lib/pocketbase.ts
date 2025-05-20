@@ -1,7 +1,7 @@
 import PocketBase from "pocketbase";
 import type { Board, userIa } from "./types";
 
-const pb = new PocketBase("http://localhost:8090");
+const pb = new PocketBase(import.meta.env.VITE_POCKETBASE_URL);
 
 export const getLengthBoards = async (userId: string) => {
   const boards = await pb.collection("boards").getFullList({
@@ -26,8 +26,8 @@ export const deleteBoard = async (id: string) => {
   await pb.collection("boards").delete(id);
 };
 
-export const updateBoard = async (id: string, title: string) => {
-  await pb.collection("boards").update(id, { title });
+export const updateBoard = async (id: string, board: Board) => {
+  await pb.collection("boards").update(id, board);
 };
 
 export const createBoard = async (board: Board) => {
@@ -41,7 +41,7 @@ export const getUserIa = async (userId: string) => {
       .getFirstListItem(`userId ="${userId}"`);
     return true;
   } catch (error: any) {
-    if (error.status === 400) {
+    if (error.status === 404) {
       return false;
     }
     throw error;

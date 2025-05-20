@@ -138,7 +138,9 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
       };
 
       if (statusEdit) {
-        updateBoard(idBoard, title);
+        console.log("entro");
+        console.log(idBoard);
+        updateBoard(idBoard, board as Board);
       } else {
         createBoard(board as Board);
       }
@@ -274,7 +276,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
         </div>
         <div className="flex flex-col h-auto max-h-[calc(100vh-200px)] overflow-y-auto no-scrollbar gap-2 lg:gap-4">
           <div className="flex gap-2 lg:gap-4">
-            <Card className="w-1/2 flex flex-col items-center flex-1">
+            <Card className="w-1/2 flex flex-col items-center flex-1 p-4">
               <h3 className="text-2xl font-bold">Pros</h3>
               <Droppable id="pros">
                 <div className="flex flex-col gap-2">
@@ -294,7 +296,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
                 </div>
               </Droppable>
             </Card>
-            <Card className="w-1/2 flex flex-col items-center flex-1">
+            <Card className="w-1/2 flex flex-col items-center flex-1 p-4">
               <h3 className="text-2xl font-bold">Contras</h3>
               <Droppable id="cons">
                 <div className="flex flex-col gap-2">
