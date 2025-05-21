@@ -22,6 +22,7 @@ import {
 import { ArrowDownToLine, MessageCircleQuestion, Trash } from "lucide-react";
 import { useNotificationStore } from "@src/lib/store";
 import type { Board, content, userIa, WriteBoardProps } from "@src/lib/types";
+import { addUserIa, getUserIa } from "@src/service/useIA";
 
 const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   const [inputs, setInputs] = useState<content[]>([]);
@@ -148,45 +149,50 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   };
 
   const handleOpinion = async () => {
-    // const userIA = await getUserIa(userId);
-    // if (userIA) {
-    //   addNotification({
-    //     message: "El usuario ya tiene IA",
-    //     type: "error",
-    //   });
-    //   return;
-    // } else {
-    if (opinion) setOpinion(null);
-    const pros = inputs
-      .filter((input) => input.status === "pros")
-      .map((input) => input.value);
-    const cons = inputs
-      .filter((input) => input.status === "cons")
-      .map((input) => input.value);
-    try {
-      const response = await fetch("/api/opinion", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          pros,
-          cons,
-          // userIA,
-        }),
-      });
-      const data = await response.json();
-      setOpinion(data.choices[0].message.content);
+    const userIA = await getUserIa(userId);
+    if (userIA) {
       addNotification({
-        message: "Opinion obtenida exitosamente",
-        type: "success",
-      });
-    } catch (error) {
-      addNotification({
-        message: "Error al obtener la opinion",
+        message: "El usuario ya tiene IA",
         type: "error",
       });
+      return;
+    } else {
+      if (opinion) setOpinion(null);
+      const pros = inputs
+        .filter((input) => input.status === "pros")
+        .map((input) => input.value);
+      const cons = inputs
+        .filter((input) => input.status === "cons")
+        .map((input) => input.value);
+      try {
+        const response = await fetch("/api/opinion", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title,
+            pros,
+            cons,
+            userIA,
+          }),
+        });
+        const data = await response.json();
+        setOpinion(data.choices[0].message.content);
+        const newIAUser: Partial<userIa> = {
+          userId,
+        };
+        await addUserIa(newIAUser as userIa);
+        addNotification({
+          message: "Opinion obtenida exitosamente",
+          type: "success",
+        });
+      } catch (error) {
+        addNotification({
+          message: "Error al obtener la opinion",
+          type: "error",
+        });
+      }
     }
   };
 
