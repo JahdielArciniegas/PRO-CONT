@@ -5,6 +5,7 @@ import clerk from "@clerk/astro";
 import { esES } from "@clerk/localizations";
 import tailwindcss from "@tailwindcss/vite";
 import { dark } from "@clerk/themes";
+import vercel from "@astrojs/vercel";
 
 import react from "@astrojs/react";
 
@@ -22,6 +23,6 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  adapter: node({ mode: "standalone" }),
+  adapter: vercel(),
   output: "server",
 });
