@@ -1,6 +1,6 @@
 import type { Board } from "@src/lib/types";
 
-const url = "http://localhost:4321/api/boards";
+const url = `${import.meta.env.API_URI}/boards`;
 
 export const getLengthBoards = async (userId: string) => {
   const response = await fetch(url, {
