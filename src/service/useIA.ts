@@ -1,6 +1,6 @@
 import type { userIa } from "@src/lib/types";
 
-const url = `${import.meta.env.API_URI}/useIA`;
+const url = `api/useIA`;
 
 export const getUserIa = async (userId: string) => {
   try {
