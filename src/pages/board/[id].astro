@@ -9,7 +9,7 @@ import {
 } from "@src/components/ui/card";
 import { Button } from "@src/components/ui/button";
 import { XIcon, CheckIcon } from "lucide-react";
-import { getBoard } from "@src/lib/pocketbase";
+import { getBoard } from "@src/service/boards";
 
 const board = await getBoard(id as string);
 ---

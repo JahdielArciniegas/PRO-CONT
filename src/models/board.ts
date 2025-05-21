@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 const boardSchema = new mongoose.Schema({
   title: String,
   id_user: String,
-  pros: String,
-  cons: String,
+  pros: [String],
+  cons: [String],
 });
 
 boardSchema.set("toJSON", {

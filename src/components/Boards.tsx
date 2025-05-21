@@ -4,18 +4,19 @@ import { Card, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Trash, ArrowLeft, ArrowRight } from "lucide-react";
 import { useNotificationStore } from "@src/lib/store";
-import { deleteBoard, getBoards } from "@src/lib/pocketbase";
+import { deleteBoard, getBoards } from "@src/service/boards";
+
+const PAGE_SIZE = 4;
+
 const Boards = ({ userId }: { userId: string }) => {
   const [boards, setBoard] = useState<Board[]>([]);
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const { addNotification } = useNotificationStore();
   useEffect(() => {
     try {
       const boards = async () => {
-        const board = await getBoards(userId, page);
-        setBoard(board.items);
-        setTotal(board.totalPages);
+        const board = await getBoards(userId);
+        setBoard(board);
       };
       boards();
       addNotification({
@@ -28,12 +29,15 @@ const Boards = ({ userId }: { userId: string }) => {
         type: "error",
       });
     }
-  }, [page]);
+  }, []);
+
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
+  const paginatedBoards = boards.slice(startIndex, startIndex + PAGE_SIZE);
 
   const handleDelete = async (id: string) => {
     try {
       await deleteBoard(id);
-      const boards = await getBoards(userId, page);
+      const boards = await getBoards(userId);
       setBoard(boards.items);
       addNotification({
         message: "Tabla eliminada exitosamente",
@@ -47,19 +51,11 @@ const Boards = ({ userId }: { userId: string }) => {
     }
   };
 
-  const ExtraerPros = (board: Board) => {
-    return board.pros.split(",");
-  };
-
-  const ExtraerCons = (board: Board) => {
-    return board.cons.split(",");
-  };
-
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="relative flex flex-col gap-4 w-full">
         <ul className="p-4 pt-12 grid sm:grid-cols-2 grid-cols-1 grid-row-2 sm:gap-4 gap-2">
-          {boards.map((board) => (
+          {paginatedBoards.map((board) => (
             <li key={board.id}>
               <Card className="sm:h-80 h-40">
                 <CardHeader className="">
@@ -85,7 +81,7 @@ const Boards = ({ userId }: { userId: string }) => {
                       Pros
                     </h4>
                     <ul className="hidden sm:flex flex-col gap-2 sm:h-52 h-32 p-4 overflow-y-auto  no-scrollbar">
-                      {ExtraerPros(board).map((pros: string) => (
+                      {board.pros.map((pros: string) => (
                         <li
                           key={Math.random()}
                           className="text-sm sm:text-base"
@@ -101,7 +97,7 @@ const Boards = ({ userId }: { userId: string }) => {
                       Contras
                     </h4>
                     <ul className="hidden sm:flex flex-col gap-2 h-52 p-4 overflow-y-auto no-scrollbar">
-                      {ExtraerCons(board).map((cons: string) => (
+                      {board.cons.map((cons: string) => (
                         <li
                           key={Math.random()}
                           className="text-sm sm:text-base"
@@ -123,16 +119,16 @@ const Boards = ({ userId }: { userId: string }) => {
 
         <div className="flex gap-4 -mt-4 justify-center w-full z-10">
           <Button
-            onClick={() => setPage(page - 1)}
-            disabled={page === 1}
             className="cursor-pointer"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(currentPage - 1)}
           >
             <ArrowLeft />
           </Button>
           <Button
-            onClick={() => setPage(page + 1)}
-            disabled={page === total}
             className="cursor-pointer "
+            disabled={startIndex + PAGE_SIZE >= boards.length}
+            onClick={() => setCurrentPage(currentPage + 1)}
           >
             <ArrowRight />
           </Button>

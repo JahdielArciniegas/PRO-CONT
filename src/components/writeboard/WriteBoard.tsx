@@ -6,10 +6,8 @@ import {
   updateBoard,
   createBoard,
   getBoard,
-  getUserIa,
   getLengthBoards,
-  addUserIa,
-} from "@src/lib/pocketbase";
+} from "@src/service/boards";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 
@@ -45,12 +43,12 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
       });
       const board = await getBoard(idBoard);
       setTitle(board.title);
-      const storedInputsPros = board.pros.split(",").map((input: string) => ({
+      const storedInputsPros = board.pros.map((input: string) => ({
         id: crypto.randomUUID(),
         value: input,
         status: "pros",
       }));
-      const storedInputsCons = board.cons.split(",").map((input: string) => ({
+      const storedInputsCons = board.cons.map((input: string) => ({
         id: crypto.randomUUID(),
         value: input,
         status: "cons",
@@ -129,12 +127,10 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
         title,
         pros: inputs
           .filter((input) => input.status === "pros")
-          .map((input) => input.value)
-          .join(","),
+          .map((input) => input.value),
         cons: inputs
           .filter((input) => input.status === "cons")
-          .map((input) => input.value)
-          .join(","),
+          .map((input) => input.value),
       };
 
       if (statusEdit) {
@@ -152,52 +148,45 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   };
 
   const handleOpinion = async () => {
-    const userIA = await getUserIa(userId);
-    if (userIA) {
+    // const userIA = await getUserIa(userId);
+    // if (userIA) {
+    //   addNotification({
+    //     message: "El usuario ya tiene IA",
+    //     type: "error",
+    //   });
+    //   return;
+    // } else {
+    if (opinion) setOpinion(null);
+    const pros = inputs
+      .filter((input) => input.status === "pros")
+      .map((input) => input.value);
+    const cons = inputs
+      .filter((input) => input.status === "cons")
+      .map((input) => input.value);
+    try {
+      const response = await fetch("/api/opinion", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          pros,
+          cons,
+          // userIA,
+        }),
+      });
+      const data = await response.json();
+      setOpinion(data.choices[0].message.content);
       addNotification({
-        message: "El usuario ya tiene IA",
+        message: "Opinion obtenida exitosamente",
+        type: "success",
+      });
+    } catch (error) {
+      addNotification({
+        message: "Error al obtener la opinion",
         type: "error",
       });
-      return;
-    } else {
-      if (opinion) setOpinion(null);
-      const pros = inputs
-        .filter((input) => input.status === "pros")
-        .map((input) => input.value)
-        .join(",");
-      const cons = inputs
-        .filter((input) => input.status === "cons")
-        .map((input) => input.value)
-        .join(",");
-      try {
-        const response = await fetch("/api/opinion", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            title,
-            pros,
-            cons,
-            userIA,
-          }),
-        });
-        const data = await response.json();
-        setOpinion(data.choices[0].message.content);
-        const userIa: Partial<userIa> = {
-          userId,
-        };
-        await addUserIa(userIa as userIa);
-        addNotification({
-          message: "Opinion obtenida exitosamente",
-          type: "success",
-        });
-      } catch (error) {
-        addNotification({
-          message: "Error al obtener la opinion",
-          type: "error",
-        });
-      }
     }
   };
 
