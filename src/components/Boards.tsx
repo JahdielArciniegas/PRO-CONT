@@ -31,14 +31,18 @@ const Boards = ({ userId }: { userId: string }) => {
     }
   }, []);
 
+  const [paginatedBoards, setPaginatedBoards] = useState<Board[]>([]);
   const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const paginatedBoards = boards.slice(startIndex, startIndex + PAGE_SIZE);
+  useEffect(() => {
+    const paginatedBoards = boards.slice(startIndex, startIndex + PAGE_SIZE);
+    setPaginatedBoards(paginatedBoards);
+  }, [currentPage, boards]);
 
   const handleDelete = async (id: string) => {
     try {
       await deleteBoard(id);
       const boards = await getBoards(userId);
-      setBoard(boards.items);
+      setBoard(boards);
       addNotification({
         message: "Tabla eliminada exitosamente",
         type: "success",
@@ -111,27 +115,32 @@ const Boards = ({ userId }: { userId: string }) => {
               </Card>
             </li>
           ))}
-          {Array.from({ length: 4 - boards.length }).map((_, index) => (
-            <li key={index} className="invisible h-40 sm:h-80"></li>
-          ))}
+          {boards.length > 0 &&
+            Array.from({ length: 4 - boards.length }).map((_, index) => (
+              <li key={index} className="invisible h-40 sm:h-80"></li>
+            ))}
         </ul>
-        {boards.length === 0 && <p>No hay tableros</p>}
+        {boards.length === 0 && <p className="text-center">No hay tableros</p>}
 
         <div className="flex gap-4 -mt-4 justify-center w-full z-10">
-          <Button
-            className="cursor-pointer"
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage(currentPage - 1)}
-          >
-            <ArrowLeft />
-          </Button>
-          <Button
-            className="cursor-pointer "
-            disabled={startIndex + PAGE_SIZE >= boards.length}
-            onClick={() => setCurrentPage(currentPage + 1)}
-          >
-            <ArrowRight />
-          </Button>
+          {boards.length > 0 && (
+            <Button
+              className="cursor-pointer"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+            >
+              <ArrowLeft />
+            </Button>
+          )}
+          {boards.length > 0 && (
+            <Button
+              className="cursor-pointer "
+              disabled={startIndex + PAGE_SIZE >= boards.length}
+              onClick={() => setCurrentPage(currentPage + 1)}
+            >
+              <ArrowRight />
+            </Button>
+          )}
         </div>
       </div>
     </Suspense>
