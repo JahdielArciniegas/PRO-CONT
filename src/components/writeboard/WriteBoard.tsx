@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { DndContext } from "@dnd-kit/core";
+import {
+  DndContext,
+  useSensor,
+  useSensors,
+  TouchSensor,
+  PointerSensor,
+} from "@dnd-kit/core";
 import { Droppable } from "./Droppable";
 import DraggableItem from "./DraggableItem";
 import {
@@ -25,6 +31,7 @@ import type { Board, content, userIa, WriteBoardProps } from "@src/lib/types";
 import { addUserIa, getUserIa } from "@src/service/useIA";
 
 const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
+  const isTouchDevice = navigator.maxTouchPoints > 0;
   const [inputs, setInputs] = useState<content[]>([]);
   const [title, setTitle] = useState("");
   const [statusEdit, setStatusEdit] = useState(false);
@@ -33,7 +40,9 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   const [editTitle, setEditTitle] = useState(false);
   const [opinion, setOpinion] = useState<string | null>(null);
   const { addNotification } = useNotificationStore();
-
+  const sensors = useSensors(
+    isTouchDevice ? useSensor(TouchSensor) : useSensor(PointerSensor)
+  );
   // const [suggestions, setSuggestions] = useState("No hay sugerencias");
   // const [latestPetition, setLatestPetition] = useState(true);
   const board = async () => {
@@ -224,7 +233,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   };
 
   return (
-    <DndContext onDragEnd={handleDragEnd}>
+    <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
       <div className="relative h-11/12 lg:h-full flex flex-col gap-4 mt-10 lg:mt-0">
         <div className="flex justify-center items-center gap-4">
           {!editTitle && title !== "" ? (
