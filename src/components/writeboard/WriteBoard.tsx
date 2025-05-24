@@ -144,7 +144,6 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
       };
 
       if (statusEdit) {
-        console.log("entro");
         console.log(idBoard);
         updateBoard(idBoard, board as Board);
       } else {
@@ -388,6 +387,8 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   );
 
   function handleDragEnd({ active, over }: any) {
+    console.log(over, active);
+
     if (!over) {
       setIdInput(active.id);
       setNewActualInput(active.value);
@@ -409,6 +410,13 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
       }
       return input;
     });
+
+    const inputSelect = inputs.find((input) => input.id === active.id);
+    if (inputSelect?.status !== over.id) {
+      setIdInput("");
+      setNewActualInput("");
+    }
+
     if (over.id === "Delete") {
       try {
         setInputs(newField.filter((input) => input.id !== active.id));
@@ -425,6 +433,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
         });
       }
     }
+
     setInputs(newField);
     localStorage.setItem("inputs", JSON.stringify(newField));
   }
