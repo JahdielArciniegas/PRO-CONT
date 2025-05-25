@@ -58,10 +58,10 @@ const Boards = ({ userId }: { userId: string }) => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className="relative flex flex-col gap-4 w-full">
-        <ul className="p-4 pt-12 grid sm:grid-cols-2 grid-cols-1 grid-row-2 sm:gap-4 gap-2">
+        <ul className="p-4 pt-12 grid sm:grid-cols-2 grid-cols-1 grid-row-2 sm:gap-4 gap-2 max-sm:h-96 max-sm:overflow-y-auto no-scrollbar">
           {paginatedBoards.map((board) => (
-            <li key={board.id}>
-              <Card className="sm:h-80 h-40">
+            <li key={board.id} className="flex justify-center items-center">
+              <Card className="sm:h-80 h-40 sm:w-96 w-full">
                 <CardHeader className="">
                   <CardTitle className="lg:text-3xl h-12 text-xl flex gap-2 items-center justify-center text-center">
                     <a
@@ -81,7 +81,7 @@ const Boards = ({ userId }: { userId: string }) => {
                 </CardHeader>
                 <div className="flex sm:gap-4 gap-2">
                   <div className="flex flex-col gap-2 w-1/2 sm:h-52 h-24 sm:p-4 p-2 ">
-                    <h4 className="sm:text-2xl text-lg w-24 sm:w-auto mx-auto sm:m-0 font-bold text-center bg-green-500 rounded-lg">
+                    <h4 className="sm:text-2xl text-lg w-20 sm:w-auto mx-auto sm:m-0 font-bold text-center bg-green-500 rounded-lg">
                       Pros
                     </h4>
                     <ul className="hidden sm:flex flex-col gap-2 sm:h-52 h-32 p-4 overflow-y-auto  no-scrollbar">
@@ -97,7 +97,7 @@ const Boards = ({ userId }: { userId: string }) => {
                   </div>
                   <span className="w-0.5 sm:h-52 h-12 bg-foreground"></span>
                   <div className="flex flex-col gap-2 w-1/2 sm:h-52 h-24 sm:p-4 p-2">
-                    <h4 className="sm:text-2xl text-lg w-24 sm:w-auto mx-auto sm:m-0  font-bold text-center bg-red-500 rounded-lg">
+                    <h4 className="sm:text-2xl text-lg w-20 sm:w-auto mx-auto sm:m-0  font-bold text-center bg-red-500 rounded-lg">
                       Contras
                     </h4>
                     <ul className="hidden sm:flex flex-col gap-2 h-52 p-4 overflow-y-auto no-scrollbar">
@@ -117,7 +117,10 @@ const Boards = ({ userId }: { userId: string }) => {
           ))}
           {boards.length > 0 &&
             Array.from({ length: 4 - boards.length }).map((_, index) => (
-              <li key={index} className="invisible h-40 sm:h-80"></li>
+              <li
+                key={index}
+                className="invisible h-24 sm:h-80 w-full sm:w-96"
+              ></li>
             ))}
         </ul>
         {boards.length === 0 && <p className="text-center">No hay tableros</p>}
