@@ -7,7 +7,7 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/astro/components";
-import { DoorOpen } from "lucide-react";
+import { DoorOpen, LockOpen } from "lucide-react";
 ---
 
 <nav
@@ -24,11 +24,11 @@ import { DoorOpen } from "lucide-react";
         ><a href="#service">Servicio</a></Button
       >
     </li>
-    <li>
+    <!-- <li>
       <Button variant="link" className="cursor-pointer  hover:text-primary/90"
         ><a href="#pricing">Precios</a></Button
       >
-    </li>
+    </li> -->
     <li>
       <Button variant="link" className="cursor-pointer  hover:text-primary/90"
         ><a href="#contact">Contacto</a>
@@ -37,15 +37,16 @@ import { DoorOpen } from "lucide-react";
     <SignedOut>
       <SignInButton
         mode="modal"
-        class="cursor-pointer p-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90"
+        class="flex cursor-pointer p-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 gap-1 items-center"
       >
-        Comienza Ahora
+        <LockOpen className="size-5" />
+        <p class="hidden sm:block">Comienza Ahora</p>
       </SignInButton>
     </SignedOut>
     <SignedIn>
       <UserButton />
       <a href="/dashboard">
-        <Button className="cursor-pointer ">
+        <Button className="cursor-pointer flex gap-1 items-center">
           <DoorOpen />
           <p class="hidden sm:block">Entrar a Dashboard</p>
         </Button>

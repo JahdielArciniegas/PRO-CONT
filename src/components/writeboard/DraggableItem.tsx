@@ -3,7 +3,7 @@ import { XIcon, LeafIcon, CheckIcon } from "lucide-react";
 
 const DraggableItem = ({ input, select }: { input: any; select: any }) => {
   return (
-    <div key={input.id} className="flex gap-2">
+    <div key={input.id} className="flex text-xs sm:text-base gap-2">
       <Draggable id={input.id} select={select}>
         {input.status === "pros" && (
           <CheckIcon className="size-4 text-green-500" />
