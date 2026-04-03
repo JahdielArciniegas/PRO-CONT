@@ -13,22 +13,22 @@ const Boards = ({ userId }: { userId: string }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const { addNotification } = useNotificationStore();
   useEffect(() => {
-    try {
       const boards = async () => {
-        const board = await getBoards(userId);
-        setBoard(board);
+        try {
+          const board = await getBoards(userId);
+          setBoard(board);
+          addNotification({
+            message: "Tablas cargadas exitosamente",
+            type: "success",
+          });
+        } catch (error) {
+          addNotification({
+            message: "Error al cargar las tablas",
+            type: "error",
+          });
+        }
       };
       boards();
-      addNotification({
-        message: "Tablas cargadas exitosamente",
-        type: "success",
-      });
-    } catch (error) {
-      addNotification({
-        message: "Error al cargar las tablas",
-        type: "error",
-      });
-    }
   }, []);
 
   const [paginatedBoards, setPaginatedBoards] = useState<Board[]>([]);
