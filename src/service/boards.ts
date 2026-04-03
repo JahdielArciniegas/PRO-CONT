@@ -1,9 +1,9 @@
 import type { Board } from "@src/lib/types";
 
-const url = "api/boards";
+const domain = import.meta.env.PUBLIC_DOMAIN || "http://localhost:4321";
 
 export const getLengthBoards = async (userId: string) => {
-  const response = await fetch(url, {
+  const response = await fetch(`${domain}/api/boards`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -15,7 +15,7 @@ export const getLengthBoards = async (userId: string) => {
 };
 
 export const getBoards = async (userId: string) => {
-  const response = await fetch(url, {
+  const response = await fetch(`${domain}/api/boards`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -27,7 +27,7 @@ export const getBoards = async (userId: string) => {
 };
 
 export const getBoard = async (id: string) => {
-  const response = await fetch(`${url}/${id}`, {
+  const response = await fetch(`${domain}/api/boards/${id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -38,7 +38,7 @@ export const getBoard = async (id: string) => {
 };
 
 export const deleteBoard = async (id: string) => {
-  const response = await fetch(`${url}/${id}`, {
+  const response = await fetch(`${domain}/api/boards/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -49,7 +49,7 @@ export const deleteBoard = async (id: string) => {
 };
 
 export const updateBoard = async (id: string, board: Board) => {
-  const response = await fetch(`${url}/${id}`, {
+  const response = await fetch(`${domain}/api/boards/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export const updateBoard = async (id: string, board: Board) => {
 };
 
 export const createBoard = async (board: Board) => {
-  const response = await fetch(url, {
+  const response = await fetch(`${domain}/api/boards`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
