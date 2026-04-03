@@ -144,10 +144,9 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
       };
 
       if (statusEdit) {
-        console.log(idBoard);
-        updateBoard(idBoard, board as Board);
+        await updateBoard(idBoard, board as Board);
       } else {
-        createBoard(board as Board);
+        await createBoard(board as Board);
       }
       localStorage.removeItem("inputs");
       localStorage.removeItem("title");
