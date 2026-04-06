@@ -1,48 +1,77 @@
-# Astro Starter Kit: Basics
+# PRO/CONT
 
-```sh
-bun create astro@latest -- --template basics
-```
+## Esta es una app web que te permite crear y comprar temas por sus pros y contras, para asi mejorar la toma de decisiones y hacerlo mucho mas facil y rapido para el cliente
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+# Caracteristicas Principales
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+- Autentificación de usurios con clerk
+- Modo claro y oscuro para los amantes de la luz o personas que prefieren la oscuridad
+- Sistema de guardado de tablas para que puedas volver a ver tus tablas cuando quieras
+- Sugerencias por IA para que te apoyes de la inteligencia artificial (actualmente sin implementar)
+- Lading Page para mostrar una presentación de la app
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+# Tecnologias Utilizadas
 
-## 🚀 Project Structure
+- Astro
+- React
+- Typescript
+- TailwindCSS
+- MongoDB
+- Mongoose
+- Clerk
+- Vercel
+- Zustand
+- Shadcn/ui
+- Lucide-react
 
-Inside of your Astro project, you'll see the following folders and files:
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+# Estructura del proyecto
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+- src
+  - assets
+  - components
+    - auth
+    - common
+    - lading
+    - ui
+    - writerboard
+  - lib
+  - models
+  - pages
+    - api
+    - board
+    - dashboard
+    - pricing (no implementada)
+    - profile
+    - writerboard
+    - index.astro
+  - service
+  - styles
+- .env
+- .gitignore
+- README.md
+- package.json
+- tsconfig.json
+- components.json
+- tsconfig.json
+- astro.config.ts
 
-## 🧞 Commands
+# Instalación
 
-All commands are run from the root of the project, from a terminal:
+git clone https://github.com/jahdiel/PRO-CONT.git
+npm install
+npm run dev
 
-| Command               | Action                                           |
-| :-------------------- | :----------------------------------------------- |
-| `bun install`         | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
+# Configuración del Entorno
 
-## 👀 Want to learn more?
+crea un archivo .env en la raiz del proyecto y agrega las siguientes variables:
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+PUBLIC_CLERK_PUBLISHABLE_KEY
+CLERK_SECRET_KEY
+IA_TOKEN
+MONGO_URI
+API_URI
+
+# Autor
+
+Jahdiel Arciniegas, https://jahdiel-arciniegas.vercel.app/, https://www.linkedin.com/in/jahdiel-arciniegas-55714125b/
