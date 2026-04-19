@@ -1,11 +1,10 @@
-import { addUserIa } from "@src/lib/pocketbase";
 import type { APIRoute } from "astro";
 
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    const { title, pros, cons, userIA, user } = await request.json();
+    const { title, pros, cons, userIA} = await request.json();
     if (!userIA) {
       const response = await fetch(
         "https://openrouter.ai/api/v1/chat/completions",
@@ -16,16 +15,16 @@ export const POST: APIRoute = async ({ request }) => {
             Authorization: `Bearer ${import.meta.env.IA_TOKEN}`,
           },
           body: JSON.stringify({
-            model: "meta-llama/llama-3.3-8b-instruct:free",
+            model: "liquid/lfm-2.5-1.2b-instruct:free",
             messages: [
               {
                 role: "system",
                 content:
-                  "Eres el consejero de alguien que esta tomando una decision, dale consejos sobre cual es la mas optima dependenciendo de los pros y contras que le dio",
+                  "Eres el consejero de alguien que esta tomando una decision, dale consejos sobre cual es la mas optima dependenciendo de los pros y contras que le dio, quiero que el mensaje lo des en texto plano, y sea resumido",
               },
               {
                 role: "user",
-                content: `Dado el titulo: ${title} y los pros: ${pros} y los contras: ${cons}, dale consejos sobre cual es la mas optima dependenciendo de los pros y contras que le dio, dame una respuesta no muy larga y concisa`,
+                content: `Dado el titulo: ${title} y los pros: ${pros.join(", ")} y los contras: ${cons.join(", ")}, dale consejos sobre cual es la mas optima dependenciendo de los pros y contras que le dio, dame una respuesta no muy larga y concisa`,
               },
             ],
           }),
@@ -44,7 +43,7 @@ export const POST: APIRoute = async ({ request }) => {
           headers: {
             "Content-Type": "application/json",
           },
-          status: 500,
+          status: 200,
         }
       );
     }

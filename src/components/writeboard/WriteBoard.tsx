@@ -38,7 +38,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   const [newActualInput, setNewActualInput] = useState("");
   const [idInput, setIdInput] = useState("");
   const [editTitle, setEditTitle] = useState(false);
-  // const [opinion, setOpinion] = useState<string | null>(null);
+  const [opinion, setOpinion] = useState<string | null>(null);
   const { addNotification } = useNotificationStore();
   const sensors = useSensors(
     isTouchDevice ? useSensor(TouchSensor) : useSensor(PointerSensor)
@@ -153,53 +153,54 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
     }
   };
 
-  // const handleOpinion = async () => {
-  //   const userIA = await getUserIa(userId);
-  //   if (userIA) {
-  //     addNotification({
-  //       message: "El usuario ya tiene IA",
-  //       type: "error",
-  //     });
-  //     return;
-  //   } else {
-  //     if (opinion) setOpinion(null);
-  //     const pros = inputs
-  //       .filter((input) => input.status === "pros")
-  //       .map((input) => input.value);
-  //     const cons = inputs
-  //       .filter((input) => input.status === "cons")
-  //       .map((input) => input.value);
-  //     try {
-  //       const response = await fetch("/api/opinion", {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           title,
-  //           pros,
-  //           cons,
-  //           userIA,
-  //         }),
-  //       });
-  //       const data = await response.json();
-  //       setOpinion(data.choices[0].message.content);
-  //       const newIAUser: Partial<userIa> = {
-  //         userId,
-  //       };
-  //       await addUserIa(newIAUser as userIa);
-  //       addNotification({
-  //         message: "Opinion obtenida exitosamente",
-  //         type: "success",
-  //       });
-  //     } catch (error) {
-  //       addNotification({
-  //         message: "Error al obtener la opinion",
-  //         type: "error",
-  //       });
-  //     }
-  //   }
-  // };
+  const handleOpinion = async () => {
+    const userIA = await getUserIa(userId);
+    if (userIA) {
+      addNotification({
+        message: "El usuario ya tiene IA",
+        type: "error",
+      });
+      return;
+    } else {
+      if (opinion) setOpinion(null);
+      const pros = inputs
+        .filter((input) => input.status === "pros")
+        .map((input) => input.value);
+      const cons = inputs
+        .filter((input) => input.status === "cons")
+        .map((input) => input.value);
+      try {
+        const response = await fetch("/api/opinion", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title,
+            pros,
+            cons,
+            userIA,
+          }),
+        });
+        const data = await response.json();
+        setOpinion(data.choices[0].message.content);
+        const newIAUser: Partial<userIa> = {
+          userId,
+        };
+        await addUserIa(newIAUser as userIa);
+        addNotification({
+          message: "Opinion obtenida exitosamente",
+          type: "success",
+        });
+      } catch (error) {
+        console.log(error);
+        addNotification({
+          message: "Error al obtener la opinion",
+          type: "error",
+        });
+      }
+    }
+  };
 
   const handleInputChange = () => {
     localStorage.setItem("title", title);
@@ -257,7 +258,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
           >
             <p className="sm:block hidden">Guardar</p> <ArrowDownToLine />
           </Button>
-          {/* <Dialog>
+          <Dialog>
             <DialogTrigger asChild>
               <Button
                 onClick={handleOpinion}
@@ -279,7 +280,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
                 )}
               </DialogHeader>
             </DialogContent>
-          </Dialog> */}
+          </Dialog>
         </div>
         <div className="flex flex-col h-auto max-h-[calc(100vh-200px)] overflow-y-auto no-scrollbar gap-2 lg:gap-4">
           <div className="flex gap-2 lg:gap-4">
