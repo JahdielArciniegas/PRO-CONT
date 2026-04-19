@@ -15,6 +15,6 @@ boardSchema.set("toJSON", {
   },
 });
 
-const boardModel = mongoose.model("board", boardSchema);
+const boardModel = mongoose.models.board || mongoose.model("board", boardSchema);
 
 export default boardModel;

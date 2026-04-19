@@ -12,6 +12,6 @@ useIaSchema.set("toJSON", {
   },
 });
 
-const useIaModel = mongoose.model("useIA", useIaSchema);
+const useIaModel = mongoose.models.useIA || mongoose.model("useIA", useIaSchema);
 
 export default useIaModel;
