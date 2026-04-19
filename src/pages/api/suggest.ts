@@ -1,17 +1,15 @@
 import type { APIRoute } from "astro";
-import { HfInference } from "@huggingface/inference";
-import { model } from "mongoose";
+import { InferenceClient } from "@huggingface/inference";
 
 export const prerender = false;
 
-const hf = new HfInference(import.meta.env.IA_AUTOMATE_TOKEN);
+const hf = new InferenceClient(import.meta.env.IA_AUTOMATE_TOKEN);
 
 export const POST: APIRoute = async ({ request }) => {
   try {
     const { latestPetition, title } = await request.json();
     const response = await hf.chatCompletion({
-      provider: "hf-inference",
-      model: "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
+      model: "katanemo/Arch-Router-1.5B:hf-inference",
       messages: [
         {
           role: "system",
@@ -26,7 +24,6 @@ export const POST: APIRoute = async ({ request }) => {
         },
       ],
     });
-    console.log(response.choices[0].message.content);
     const data = response.choices[0].message.content;
     return new Response(JSON.stringify(data), {
       headers: {

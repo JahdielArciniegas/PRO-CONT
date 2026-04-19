@@ -25,7 +25,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { ArrowDownToLine, MessageCircleQuestion, Trash } from "lucide-react";
+import { ArrowDownToLine, MessageCircleQuestion, Sparkles, Trash } from "lucide-react";
 import { useNotificationStore } from "@src/lib/store";
 import type { Board, content, userIa, WriteBoardProps } from "@src/lib/types";
 import { addUserIa, getUserIa } from "@src/service/useIA";
@@ -43,8 +43,8 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   const sensors = useSensors(
     isTouchDevice ? useSensor(TouchSensor) : useSensor(PointerSensor)
   );
-  // const [suggestions, setSuggestions] = useState("No hay sugerencias");
-  // const [latestPetition, setLatestPetition] = useState(true);
+  const [suggestions, setSuggestions] = useState("No hay sugerencias");
+  const [latestPetition, setLatestPetition] = useState(true);
   const board = async () => {
     try {
       addNotification({
@@ -81,7 +81,6 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
     }
   };
 
-  /* Manejo de Sugerencias - No implementado  
   const handleSuggest = async () => {
     const response = await fetch("/api/suggest", {
       method: "POST",
@@ -95,10 +94,9 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
     });
     setLatestPetition(!latestPetition);
     const data = await response.json();
-    console.log(data);
-    setSuggestions(data.choices[0].message.content);
+    setSuggestions(data);
   };
-*/
+
   useEffect(() => {
     const idEdit = localStorage.getItem("idEdit");
     if (idEdit) {
@@ -380,13 +378,12 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
               cancelar
             </Button>
           </div>
-          {/* Manejo de Sugerencias - No implementado */}
-          {/* <div className="flex gap-2 items-center">
+          <div className="flex gap-2 items-center">
             <p className="w-64 p-2">{suggestions}</p>
             <Button onClick={handleSuggest} className=" cursor-pointer">
-              <HandHelping /> Sugerencia
+              <Sparkles /> Sugerencia
             </Button>
-          </div> */}
+          </div>
         </Card>
       </div>
     </DndContext>
