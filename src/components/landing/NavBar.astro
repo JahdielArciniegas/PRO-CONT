@@ -3,8 +3,7 @@ import { ModeToggle } from "../common/ModeToggle";
 import { Button } from "../ui/button";
 import {
   SignInButton,
-  SignedIn,
-  SignedOut,
+  Show,
   UserButton,
 } from "@clerk/astro/components";
 import { DoorOpen, LockOpen } from "lucide-react";
@@ -34,16 +33,18 @@ import { DoorOpen, LockOpen } from "lucide-react";
         ><a href="#contact">Contacto</a>
       </Button>
     </li> -->
-    <SignedOut>
+    <Show when="signed-out">
       <SignInButton
         mode="modal"
-        class="flex cursor-pointer p-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 gap-1 items-center"
+        asChild
       >
-        <LockOpen className="size-5" />
-        <p class="hidden sm:block">Comienza Ahora</p>
+        <Button className="cursor-pointer flex gap-1 items-center">
+          <LockOpen className="size-5" />
+          <p class="hidden sm:block">Comienza Ahora</p>
+        </Button>
       </SignInButton>
-    </SignedOut>
-    <SignedIn>
+    </Show>
+    <Show when="signed-in">
       <UserButton />
       <a href="/dashboard">
         <Button className="cursor-pointer flex gap-1 items-center">
