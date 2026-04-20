@@ -4,7 +4,7 @@ export const prerender = false;
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    const { title, pros, cons, userIA} = await request.json();
+    const { title, pros, cons, userIA } = await request.json();
     if (!userIA) {
       const response = await fetch(
         "https://openrouter.ai/api/v1/chat/completions",
@@ -28,7 +28,7 @@ export const POST: APIRoute = async ({ request }) => {
               },
             ],
           }),
-        }
+        },
       );
       const data = await response.json();
       return new Response(JSON.stringify(data), {
@@ -44,7 +44,7 @@ export const POST: APIRoute = async ({ request }) => {
             "Content-Type": "application/json",
           },
           status: 200,
-        }
+        },
       );
     }
   } catch (error) {
@@ -56,7 +56,7 @@ export const POST: APIRoute = async ({ request }) => {
           "Content-Type": "application/json",
         },
         status: 500,
-      }
+      },
     );
   }
 };

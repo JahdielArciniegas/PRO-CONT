@@ -12,8 +12,8 @@ const Notification = () => {
             notification.type === "success"
               ? "text-green-500"
               : notification.type === "error"
-              ? "text-red-500"
-              : "text-primary"
+                ? "text-red-500"
+                : "text-primary"
           }`}
         >
           <p>{notification.message}</p>

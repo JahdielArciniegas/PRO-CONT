@@ -24,7 +24,6 @@
 - Shadcn/ui
 - Lucide-react
 
-
 # Estructura del proyecto
 
 - src
