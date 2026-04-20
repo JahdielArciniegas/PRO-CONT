@@ -25,7 +25,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { ArrowDownToLine, MessageCircleQuestion, Sparkles, Trash } from "lucide-react";
+import {
+  ArrowDownToLine,
+  MessageCircleQuestion,
+  Sparkles,
+  Trash,
+} from "lucide-react";
 import { useNotificationStore } from "@src/lib/store";
 import type { Board, content, userIa, WriteBoardProps } from "@src/lib/types";
 import { addUserIa, getUserIa } from "@src/service/useIA";
@@ -41,7 +46,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   const [opinion, setOpinion] = useState<string | null>(null);
   const { addNotification } = useNotificationStore();
   const sensors = useSensors(
-    isTouchDevice ? useSensor(TouchSensor) : useSensor(PointerSensor)
+    isTouchDevice ? useSensor(TouchSensor) : useSensor(PointerSensor),
   );
   const [suggestions, setSuggestions] = useState("No hay sugerencias");
   const [latestPetition, setLatestPetition] = useState(true);
@@ -218,7 +223,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
       ];
     } else {
       updatedInputs = inputs.map((input) =>
-        input.id === idInput ? { ...input, value: newActualInput } : input
+        input.id === idInput ? { ...input, value: newActualInput } : input,
       );
     }
 
@@ -360,24 +365,26 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
               value={newActualInput}
               onChange={(e) => setNewActualInput(e.target.value)}
             />
-            <Button
-              onClick={handleInputChange}
-              className={`cursor-pointer text-xs sm:text-base ${
-                idInput === "" ? "bg-green-500 text-white" : ""
-              }`}
-            >
-              {idInput === "" ? "Agregar" : "Editar"}
-            </Button>
-            <Button
-              onClick={() => {
-                setNewActualInput("");
-                setIdInput("");
-              }}
-              className="cursor-pointer text-xs sm:text-base"
-              variant="destructive"
-            >
-              cancelar
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button
+                onClick={handleInputChange}
+                className={`cursor-pointer text-xs sm:text-base ${
+                  idInput === "" ? "bg-green-500 text-white" : ""
+                }`}
+              >
+                {idInput === "" ? "Agregar" : "Editar"}
+              </Button>
+              <Button
+                onClick={() => {
+                  setNewActualInput("");
+                  setIdInput("");
+                }}
+                className="cursor-pointer text-xs sm:text-base"
+                variant="destructive"
+              >
+                cancelar
+              </Button>
+            </div>
           </div>
           <div className="flex gap-2 items-center">
             <p className="w-64 p-2">{suggestions}</p>
