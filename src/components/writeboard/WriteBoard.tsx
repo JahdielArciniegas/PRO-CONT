@@ -27,6 +27,7 @@ import {
 } from "../ui/dialog";
 import {
   ArrowDownToLine,
+  Loader2,
   MessageCircleQuestion,
   Sparkles,
   Trash,
@@ -44,6 +45,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   const [idInput, setIdInput] = useState("");
   const [editTitle, setEditTitle] = useState(false);
   const [opinion, setOpinion] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const { addNotification } = useNotificationStore();
   const sensors = useSensors(
     isTouchDevice ? useSensor(TouchSensor) : useSensor(PointerSensor),
@@ -51,6 +53,7 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
   const [suggestions, setSuggestions] = useState("No hay sugerencias");
   const [latestPetition, setLatestPetition] = useState(true);
   const board = async () => {
+    setLoading(true);
     try {
       addNotification({
         message: "Cargando Tabla",
@@ -83,6 +86,8 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
         message: "Error al cargar la tabla",
         type: "error",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -236,164 +241,171 @@ const WriteBoard = ({ userId, idBoard = "" }: WriteBoardProps) => {
 
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-      <div className="relative h-11/12 lg:h-full flex flex-col sm:gap-4 gap-2 mt-10 lg:mt-0">
-        <div className="flex justify-center items-center gap-2 sm:gap-4">
-          {!editTitle && title !== "" ? (
-            <h1
-              className="sm:text-2xl text-base cursor-pointer font-bold"
-              onClick={() => setEditTitle(true)}
+      {!loading ? (
+        <div className="relative h-11/12 lg:h-full flex flex-col sm:gap-4 gap-2 mt-10 lg:mt-0">
+          <div className="flex justify-center items-center gap-2 sm:gap-4">
+            {!editTitle && title !== "" ? (
+              <h1
+                className="sm:text-2xl text-base cursor-pointer font-bold"
+                onClick={() => setEditTitle(true)}
+              >
+                {title}
+              </h1>
+            ) : (
+              <input
+                onFocus={() => setEditTitle(true)}
+                onBlur={() => setEditTitle(false)}
+                type="text"
+                className="p-1 sm:p-2 text-base sm:text-2xl rounded-lg bg-muted w-1/2 sm:w-auto"
+                placeholder="Escribe un Titulo para tu tabla"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            )}
+
+            <Button
+              onClick={saveBoard}
+              className="cursor-pointer size-6 sm:size-auto"
             >
-              {title}
-            </h1>
-          ) : (
-            <input
-              onFocus={() => setEditTitle(true)}
-              onBlur={() => setEditTitle(false)}
-              type="text"
-              className="p-1 sm:p-2 text-base sm:text-2xl rounded-lg bg-muted w-1/2 sm:w-auto"
-              placeholder="Escribe un Titulo para tu tabla"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          )}
-
-          <Button
-            onClick={saveBoard}
-            className="cursor-pointer size-6 sm:size-auto"
-          >
-            <p className="sm:block hidden">Guardar</p> <ArrowDownToLine />
-          </Button>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                onClick={handleOpinion}
-                className="cursor-pointer size-6 sm:size-auto"
-              >
-                <p className="sm:block hidden">Opinión</p>{" "}
-                <MessageCircleQuestion />
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Opinión</DialogTitle>
-                {opinion ? (
+              <p className="sm:block hidden">Guardar</p> <ArrowDownToLine />
+            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  onClick={handleOpinion}
+                  className="cursor-pointer size-6 sm:size-auto"
+                >
+                  <p className="sm:block hidden">Opinión</p>{" "}
+                  <MessageCircleQuestion />
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Opinión</DialogTitle>
+                  {opinion ? (
+                    <div className="flex flex-col gap-2">
+                      <DialogDescription>{opinion}</DialogDescription>
+                    </div>
+                  ) : (
+                    <DialogDescription>Loading...</DialogDescription>
+                  )}
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+          </div>
+          <div className="flex flex-col h-auto max-h-[calc(100vh-200px)] overflow-y-auto no-scrollbar gap-2 lg:gap-4">
+            <div className="flex gap-2 lg:gap-4">
+              <Card className="w-1/2 flex flex-col items-center flex-1 p-2 sm:p-4">
+                <h3 className="text-base sm:text-2xl font-bold">Pros</h3>
+                <Droppable id="pros">
                   <div className="flex flex-col gap-2">
-                    <DialogDescription>{opinion}</DialogDescription>
+                    {inputs.find((input) => input.status === "pros") ? (
+                      inputs
+                        .filter((input) => input.status === "pros")
+                        .map((input) => (
+                          <DraggableItem
+                            key={input.id}
+                            input={input}
+                            select={input.value === newActualInput}
+                          />
+                        ))
+                    ) : (
+                      <p className="text-xs sm:text-base">No hay Pros</p>
+                    )}
                   </div>
+                </Droppable>
+              </Card>
+              <Card className="w-1/2 flex flex-col items-center flex-1 p-2 sm:p-4">
+                <h3 className="text-base sm:text-2xl font-bold">Contras</h3>
+                <Droppable id="cons">
+                  <div className="flex flex-col gap-2">
+                    {inputs.find((input) => input.status === "cons") ? (
+                      inputs
+                        .filter((input) => input.status === "cons")
+                        .map((input) => (
+                          <DraggableItem
+                            key={input.id}
+                            input={input}
+                            select={input.value === newActualInput}
+                          />
+                        ))
+                    ) : (
+                      <p className="text-xs sm:text-base">No hay Contras</p>
+                    )}
+                  </div>
+                </Droppable>
+              </Card>
+            </div>
+            <Card className="w-full flex justify-center p-2 sm:p-4">
+              <Droppable id="new">
+                {inputs.find((input) => input.status === "new") ? (
+                  inputs
+                    .filter((input) => input.status === "new")
+                    .map((input) => (
+                      <DraggableItem
+                        key={input.id}
+                        input={input}
+                        select={input.value === newActualInput}
+                      />
+                    ))
                 ) : (
-                  <DialogDescription>Loading...</DialogDescription>
+                  <p className="text-xs sm:text-base">No hay inputs</p>
                 )}
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
-        </div>
-        <div className="flex flex-col h-auto max-h-[calc(100vh-200px)] overflow-y-auto no-scrollbar gap-2 lg:gap-4">
-          <div className="flex gap-2 lg:gap-4">
-            <Card className="w-1/2 flex flex-col items-center flex-1 p-2 sm:p-4">
-              <h3 className="text-base sm:text-2xl font-bold">Pros</h3>
-              <Droppable id="pros">
-                <div className="flex flex-col gap-2">
-                  {inputs.find((input) => input.status === "pros") ? (
-                    inputs
-                      .filter((input) => input.status === "pros")
-                      .map((input) => (
-                        <DraggableItem
-                          key={input.id}
-                          input={input}
-                          select={input.value === newActualInput}
-                        />
-                      ))
-                  ) : (
-                    <p className="text-xs sm:text-base">No hay Pros</p>
-                  )}
-                </div>
               </Droppable>
             </Card>
-            <Card className="w-1/2 flex flex-col items-center flex-1 p-2 sm:p-4">
-              <h3 className="text-base sm:text-2xl font-bold">Contras</h3>
-              <Droppable id="cons">
-                <div className="flex flex-col gap-2">
-                  {inputs.find((input) => input.status === "cons") ? (
-                    inputs
-                      .filter((input) => input.status === "cons")
-                      .map((input) => (
-                        <DraggableItem
-                          key={input.id}
-                          input={input}
-                          select={input.value === newActualInput}
-                        />
-                      ))
-                  ) : (
-                    <p className="text-xs sm:text-base">No hay Contras</p>
-                  )}
-                </div>
+            <div className="flex justify-center">
+              <Droppable id="Delete">
+                <Button variant="destructive" className="w-24 h-12 sm:w-64">
+                  <Trash />
+                </Button>
               </Droppable>
-            </Card>
-          </div>
-          <Card className="w-full flex justify-center p-2 sm:p-4">
-            <Droppable id="new">
-              {inputs.find((input) => input.status === "new") ? (
-                inputs
-                  .filter((input) => input.status === "new")
-                  .map((input) => (
-                    <DraggableItem
-                      key={input.id}
-                      input={input}
-                      select={input.value === newActualInput}
-                    />
-                  ))
-              ) : (
-                <p className="text-xs sm:text-base">No hay inputs</p>
-              )}
-            </Droppable>
-          </Card>
-          <div className="flex justify-center">
-            <Droppable id="Delete">
-              <Button variant="destructive" className="w-24 h-12 sm:w-64">
-                <Trash />
-              </Button>
-            </Droppable>
-          </div>
-        </div>
-
-        <Card className="absolute bottom-4 self-center flex flex-col gap-2 justify-center w-full items-center">
-          <div className="flex gap-2 items-center flex-col">
-            <input
-              type="text"
-              className="p-2 rounded-lg bg-muted"
-              placeholder="Escribe un nuevo input"
-              value={newActualInput}
-              onChange={(e) => setNewActualInput(e.target.value)}
-            />
-            <div className="flex flex-col sm:flex-row gap-2">
-              <Button
-                onClick={handleInputChange}
-                className={`cursor-pointer text-xs sm:text-base ${
-                  idInput === "" ? "bg-green-500 text-white" : ""
-                }`}
-              >
-                {idInput === "" ? "Agregar" : "Editar"}
-              </Button>
-              <Button
-                onClick={() => {
-                  setNewActualInput("");
-                  setIdInput("");
-                }}
-                className="cursor-pointer text-xs sm:text-base"
-                variant="destructive"
-              >
-                cancelar
-              </Button>
             </div>
           </div>
-          <div className="flex gap-2 items-center">
-            <p className="w-64 p-2">{suggestions}</p>
-            <Button onClick={handleSuggest} className=" cursor-pointer">
-              <Sparkles /> Sugerencia
-            </Button>
-          </div>
-        </Card>
-      </div>
+
+          <Card className="absolute bottom-4 self-center flex flex-col gap-2 justify-center w-full items-center">
+            <div className="flex gap-2 items-center flex-col">
+              <input
+                type="text"
+                className="p-2 rounded-lg bg-muted"
+                placeholder="Escribe un nuevo input"
+                value={newActualInput}
+                onChange={(e) => setNewActualInput(e.target.value)}
+              />
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button
+                  onClick={handleInputChange}
+                  className={`cursor-pointer text-xs sm:text-base ${
+                    idInput === "" ? "bg-green-500 text-white" : ""
+                  }`}
+                >
+                  {idInput === "" ? "Agregar" : "Editar"}
+                </Button>
+                <Button
+                  onClick={() => {
+                    setNewActualInput("");
+                    setIdInput("");
+                  }}
+                  className="cursor-pointer text-xs sm:text-base"
+                  variant="destructive"
+                >
+                  cancelar
+                </Button>
+              </div>
+            </div>
+            <div className="flex gap-2 items-center">
+              <p className="w-64 p-2">{suggestions}</p>
+              <Button onClick={handleSuggest} className=" cursor-pointer">
+                <Sparkles /> Sugerencia
+              </Button>
+            </div>
+          </Card>
+        </div>
+      ) : (
+        <div className="flex justify-center items-center h-96">
+          <Loader2 className="animate-spin" />
+          <p className="text-center">Cargando...</p>
+        </div>
+      )}
     </DndContext>
   );
 
