@@ -1,19 +1,24 @@
 ---
+import Mail from "@src/icons/Mail.astro";
 import { Button } from "../ui/button";
+import Github from "@src/icons/Github.astro";
+import LinkedIn from "@src/icons/LinkedIn.astro";
 ---
 
 <section
   id="contact"
-  class="w-full h-screen bg-gradient-to-t from-muted to-background flex flex-col items-center justify-center gap-4"
+  class="w-full h-96 bg-linear-to-t from-muted/50 to-background/50 flex flex-col items-center justify-center gap-16"
 >
-  <h2 class="sm:text-6xl text-4xl">Contacto</h2>
-  <form
-    action=""
-    class="flex flex-col gap-4 w-72 sm:w-96 bg-background p-4 rounded-lg shadow-2xl"
-  >
-    <input type="text" placeholder="Nombre" class="p-2 rounded-lg" />
-    <input type="email" placeholder="Email" class="p-2 rounded-lg" />
-    <textarea placeholder="Mensaje" class="p-2 rounded-lg"></textarea>
-    <Button type="submit" className="cursor-pointer"> Enviar </Button>
-  </form>
+  <h2 class="sm:text-6xl text-4xl">Contacto con nosotros</h2>
+  <div class="flex gap-16">
+    <a href="mailto:arciniegasjahdiel@gmail.com">
+      <Mail />
+    </a>
+    <a class="cursor-pointer" href="https://github.com/JahdielArciniegas/PRO-CONT">
+      <Github />
+    </a>
+    <a class="cursor-pointer" href="https://www.linkedin.com/in/jahdiel-arciniegas/">
+      <LinkedIn />
+    </a>
+  </div>
 </section>
